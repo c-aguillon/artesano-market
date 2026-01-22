@@ -1,0 +1,52 @@
+{% extends "WebApp/estructura.html" %}
+{% load static %}
+
+{% block content %}
+
+    <header class="text-center py-5">
+        <h1 class="display-4 font-weight-bold" style="color: var(--color-olive-dark);">Contáctanos</h1>
+        <p style="color: var(--color-olive-light);">¿Tienes dudas sobre un envío o un pedido personalizado?</p>
+    </header>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-5 mb-4">
+                <div class="card-mattel h-100 text-left align-items-start"> <h3 class="mb-4" style="color: var(--color-terracotta);">Nuestras Oficinas</h3>
+                    <p class="text-muted mb-4">
+                        Estamos ubicados en el corazón de la zona artesanal, listos para conectar tu hogar con nuestras tradiciones.
+                    </p>
+                    
+                    <div class="info-item mb-3">
+                        <i class="fas fa-map-marker-alt fa-lg mr-3" style="color: var(--color-olive-light);"></i>
+                        <span>Av. Artesanos 404, Centro, Oaxaca.</span>
+                    </div>
+                    <div class="info-item mb-3">
+                        <i class="fas fa-envelope fa-lg mr-3" style="color: var(--color-olive-light);"></i>
+                        <span>hola@artesanomarket.mx</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone fa-lg mr-3" style="color: var(--color-olive-light);"></i>
+                        <span>(555) 123-4567</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card-mattel text-left align-items-stretch">
+                    <h3 class="mb-4" style="color: var(--color-olive-dark);">Envíanos un mensaje</h3>
+                    
+                    <form action="" method="POST" class="mattel-form">
+                        {% csrf_token %}
+                        
+                        {{ formulario.as_p }}
+
+                        <button type="submit" class="btn btn-mattel mt-3">
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

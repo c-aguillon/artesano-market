@@ -1,0 +1,138 @@
+{% extends "WebApp/estructura.html" %}
+{% load static %}
+
+{% block content %}
+
+    <header class="position-relative text-center text-white mb-5" style="background-color: var(--color-olive-dark); min-height: 50vh; display: flex; align-items: center; justify-content: center; background-image: url('{% static 'WebApp/img/hero_bg.jpg' %}'); background-size: cover; background-blend-mode: overlay;">
+        <div class="container position-relative z-index-1">
+            <h1 class="display-4 font-weight-bold mb-3" style="color: #fff; letter-spacing: 1px;">
+                Manos que cuentan historias
+            </h1>
+            <p class="lead mb-4" style="color: var(--color-earth-tan); font-weight: 500;">
+                El mercado digital de los mejores artesanos de México.
+            </p>
+            <a href="{% url 'Blog' %}" class="btn btn-mattel mt-3">
+                Ver Catálogo
+            </a>
+        </div>
+    </header>
+
+    <section class="page-section my-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img class="img-fluid intro-img" src="{% static 'WebApp/img/taller.jpg' %}" alt="Manos artesanas trabajando">
+                </div>
+                <div class="col-lg-6">
+                    <div class="intro-text"> 
+                        <h2 class="section-heading mb-4">
+                            <span class="section-heading-upper">Tradición Viva</span>
+                            <span class="section-heading-lower">Del Taller a tu Hogar</span>
+                        </h2>
+                        <p class="mb-4 text-muted">
+                            Cada pieza en nuestra colección es única. Trabajamos directamente con maestros artesanos para traer obras de barro negro, textiles bordados a mano y joyería de filigrana, asegurando un comercio justo y preservando técnicas ancestrales.
+                        </p>
+                        <div class="row mt-4 text-center">
+                            <div class="col-6">
+                                <i class="fas fa-seedling fa-2x mb-2" style="color: var(--color-olive-light);"></i>
+                                <h6 style="color: var(--color-olive-dark);">100% Natural</h6>
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-hands-helping fa-2x mb-2" style="color: var(--color-terracotta);"></i>
+                                <h6 style="color: var(--color-olive-dark);">Comercio Justo</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="page-section mb-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h3 style="color: var(--color-olive-dark); font-weight: 700;">Nuestras Especialidades</h3>
+                <div style="height: 3px; width: 50px; background-color: var(--color-terracotta); margin: 10px auto;"></div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card-mattel p-0 h-100 align-items-center text-center overflow-hidden" style="padding: 0 !important;">
+                        <div style="height: 200px; width: 100%; background-color: var(--color-earth-tan); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-wine-glass-alt fa-3x" style="color: rgba(255,255,255,0.5);"></i>
+                        </div>
+                        <div class="p-4">
+                            <h5 style="color: var(--color-olive-dark);">Barro Negro</h5>
+                            <p class="small text-muted mb-3">La elegancia de Oaxaca en piezas horneadas.</p>
+                            <a href="#" style="color: var(--color-terracotta); font-weight: 700; font-size: 0.9rem;">Ver Colección &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card-mattel p-0 h-100 align-items-center text-center overflow-hidden" style="padding: 0 !important;">
+                        <div style="height: 200px; width: 100%; background-color: var(--color-olive-light); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-tshirt fa-3x" style="color: rgba(255,255,255,0.5);"></i>
+                        </div>
+                        <div class="p-4">
+                            <h5 style="color: var(--color-olive-dark);">Textiles</h5>
+                            <p class="small text-muted mb-3">Bordados llenos de color y tradición.</p>
+                            <a href="#" style="color: var(--color-terracotta); font-weight: 700; font-size: 0.9rem;">Ver Colección &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card-mattel p-0 h-100 align-items-center text-center overflow-hidden" style="padding: 0 !important;">
+                        <div style="height: 200px; width: 100%; background-color: var(--color-terracotta); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-gem fa-3x" style="color: rgba(255,255,255,0.5);"></i>
+                        </div>
+                        <div class="p-4">
+                            <h5 style="color: var(--color-olive-dark);">Joyería</h5>
+                            <p class="small text-muted mb-3">Plata y filigrana hecha a mano.</p>
+                            <a href="#" style="color: var(--color-terracotta); font-weight: 700; font-size: 0.9rem;">Ver Colección &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color: var(--color-earth-tan); margin-bottom: 5rem;">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    <div style="width: 150px; height: 150px; background-color: #fff; border-radius: 50%; margin: 0 auto; overflow: hidden; border: 4px solid #fff; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user fa-4x" style="color: #ddd;"></i>
+                    </div>
+                </div>
+                <div class="col-md-7 text-center text-md-left">
+                    <h5 style="color: var(--color-terracotta); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Artesana del Mes</h5>
+                    <h3 class="mb-3" style="color: var(--color-olive-dark); font-weight: 700;">"Cuando te llevas una pieza, te llevas parte de mi corazón y de mi tierra."</h3>
+                    <p class="mb-0 font-weight-bold">— Doña María, <em>Tejedora de Chiapas</em></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="page-section cta">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <div class="cta-inner text-center rounded">
+                        <h2 class="section-heading mb-4">
+                            <span class="section-heading-upper">Únete a nosotros</span>
+                            <span class="section-heading-lower">Apoya el Arte Local</span>
+                        </h2>
+                        <p class="mb-0 text-muted">
+                            Al comprar aquí, ayudas a familias enteras a mantener vivas sus tradiciones. ¿Listo para encontrar esa pieza especial?
+                        </p>
+                        <br>
+                        <a href="{% url 'Blog' %}" class="btn btn-nav-cta mt-3">Explorar Tienda</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

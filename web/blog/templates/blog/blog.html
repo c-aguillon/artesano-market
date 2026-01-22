@@ -1,0 +1,191 @@
+{% extends "WebApp/estructura.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-5">
+    
+    <div class="text-center mb-5">
+        <h1 class="display-5 font-weight-bold" style="color: var(--color-olive-dark);">Mercado Artesanal</h1>
+        <div style="height: 4px; width: 60px; background-color: var(--color-terracotta); margin: 10px auto;"></div>
+        <p style="color: var(--color-olive-light);">Piezas únicas curadas por región y técnica.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3 mb-5">
+            <div class="bg-white p-4 shadow-sm sticky-top" style="top: 100px; border-radius: var(--radius-xl); border: 1px solid #eee;">
+                <h4 class="filter-section-title">Filtros</h4>
+
+                <form class="mattel-form" method="GET" action="{% url 'Blog' %}">
+
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold small text-muted">REGIÓN</label>
+                        <select class="form-control" name="region">
+                            <option value="todas">Todas las regiones</option>
+                            {% for region in regiones %}
+                                <option value="{{ region.id }}" 
+                                    {% if filtros_actuales.region == region.id %}selected{% endif %}>
+                                    {{ region.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold small text-muted">TÉCNICA</label>
+                        {% for categoria in categorias %}
+                        <div class="custom-control custom-checkbox mb-2">
+                            <input type="checkbox" class="custom-control-input" 
+                                   id="cat{{categoria.id}}" 
+                                   name="categoria" 
+                                   value="{{ categoria.id }}"
+                                   {% if categoria.id in filtros_actuales.categorias %}checked{% endif %}>
+
+                            <label class="custom-control-label" for="cat{{categoria.id}}" style="color: var(--color-text-dark); font-weight: normal; cursor: pointer;">
+                                {{categoria.nombre}}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold small text-muted">PRECIO MÁXIMO</label>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="small">$0</span>
+                            <span class="font-weight-bold" style="color: var(--color-terracotta);" id="precioDisplay">
+                                ${{ filtros_actuales.precio_max|default:"5000" }}
+                            </span>
+                        </div>
+                        <input type="range" class="custom-range" 
+                               name="precio_max" 
+                               min="0" max="5000" step="100"
+                               value="{{ filtros_actuales.precio_max|default:'5000' }}"
+                               id="precioRange"
+                               style="accent-color: var(--color-terracotta);">
+                    </div>
+                
+                    <button type="submit" class="btn btn-mattel btn-block w-100" style="padding: 0.8rem;">
+                        Filtrar Resultados
+                    </button>
+
+                    <a href="{% url 'Blog' %}" class="btn btn-sm btn-link btn-block mt-2" style="color: var(--color-olive-light);">
+                        Limpiar Filtros
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            const rangeInput = document.getElementById('precioRange');
+            const priceDisplay = document.getElementById('precioDisplay');
+        
+            rangeInput.addEventListener('input', function() {
+                priceDisplay.textContent = '$' + rangeInput.value;
+            });
+        </script>
+
+        <div class="col-lg-9">
+            <div class="row">
+                {% for post in posts %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--radius-xl); overflow: hidden;">
+                        <a href="{% url 'producto_detalle' post.id %}" class="d-block">
+                            {% if post.imagen %}
+                                <img src="{{post.imagen.url}}" class="card-img-top" alt="{{post.nombre}}" style="height: 220px; object-fit: cover;">
+                            {% else %}
+                                <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px;">
+                                    <i class="fas fa-camera fa-3x text-muted opacity-50"></i>
+                                </div>
+                            {% endif %}
+                        </a>
+
+                        <div class="card-body d-flex flex-column">
+                            {% if post.categorias.first %}
+                                <small class="text-uppercase font-weight-bold mb-2" style="color: var(--color-terracotta); letter-spacing: 1px;">
+                                    {{ post.categorias.first.nombre }}
+                                </small>
+                            {% endif %}
+                            
+                            <h5 class="card-title font-weight-bold mb-2">
+                                <a href="{% url 'producto_detalle' post.id %}" style="color: var(--color-olive-dark); text-decoration: none;">
+                                    {{ post.nombre }}
+                                </a>
+                            </h5>
+
+                            <p class="card-text text-muted small flex-grow-1">
+                                {{ post.descripcion|truncatewords:12 }}
+                            </p>
+
+                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                                <span class="h5 font-weight-bold mb-0" style="color: var(--color-olive-dark);">
+                                    ${{ post.precio }}
+                                </span>
+                                <a href="{% url 'producto_detalle' post.id %}" class="btn btn-terracotta-sm">
+                                    Ver Detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                     <i class="fas fa-box-open fa-4x mb-3" style="color: var(--color-earth-tan);"></i>
+                     <h3 style="color: var(--color-olive-dark);">Aún no hay productos</h3>
+                     <p class="text-muted">Estamos trabajando en curar la mejor selección para ti.</p>
+                </div>
+                {% endfor %}
+                {% if posts.has_other_pages %}
+                <div class="row mt-5">
+                    <div class="col-12 d-flex justify-content-center">
+                        <nav aria-label="Navegación del catálogo">
+                            <ul class="pagination">
+                                
+                                {% if posts.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link border-0 text-muted shadow-sm rounded-circle mr-2" 
+                                       href="?page={{ posts.previous_page_number }}{{ filtros_url }}" 
+                                       style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            
+                                {% for num in posts.paginator.page_range %}
+                                    {% if posts.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link border-0 shadow-sm rounded-circle mx-1" 
+                                                  style="background-color: var(--color-terracotta); color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                {{ num }}
+                                            </span>
+                                        </li>
+                                    {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link border-0 text-muted shadow-sm rounded-circle mx-1" 
+                                               href="?page={{ num }}{{ filtros_url }}"
+                                               style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                {{ num }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                    
+                                {% if posts.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link border-0 text-muted shadow-sm rounded-circle ml-2" 
+                                       href="?page={{ posts.next_page_number }}{{ filtros_url }}"
+                                       style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                {% endif %}
+                </div> </div>
+            </div>
+        </div>
+
+{% endblock %}
