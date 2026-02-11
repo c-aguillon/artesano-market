@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'artesano_db',
         'USER': 'postgres',
-        'PASSWORD' : '12345678',
+        'PASSWORD' : '123456789',
         'HOST': '127.0.0.1',
         'DATABASE_PORT': '5432',
     }
