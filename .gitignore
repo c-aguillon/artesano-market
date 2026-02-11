@@ -6,6 +6,9 @@ __pycache__/
 venv/
 env/
 .env
+.venv
+.env/
+.venv/
 
 db.sqlite3
 
@@ -15,5 +18,3 @@ staticfiles/
 # Archivos de sistema
 .DS_Store
 Thumbs.db
-
-# Media (Opcional: Si no quieres subir las fotos de prueba)
