@@ -40,7 +40,12 @@ pip install -r requirements.txt
 ```
 
 ## 4. Configuración de Base de Datos (PostgreSQL)
+Entrar a <ins>settings.py</ins> 
 
+```
+cd/web/web
+```
+Editar la siguiente linea:
 ```
 DATABASES = {
     'default': {
