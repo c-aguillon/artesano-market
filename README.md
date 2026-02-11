@@ -1,36 +1,47 @@
-## Stack Tecnológico
+# Tecnologías Utilizadas
 
-* **Backend:** Python 3.12, Django 5.2.5.
-* **Base de Datos:** PostgreSQL (Relacional).
-* **Frontend:** HTML5, CSS3 (Custom Properties), Bootstrap 4, JavaScript Vanilla.
-* **Control de Versiones:** Git.
+* **Backend:** Python 3, Django 5.2.5
+* **Frontend:** HTML5, CSS3, JavaScript (Fetch API, Handlebars.js)
+* **Base de Datos:** SQLite / PostgreSQL
+* **Otros:** Pillow (Gestión de imágenes)
 
-## Instalación y Configuración Local
+---
 
-Sigue estos pasos para ejecutar el proyecto en tu entorno local:
+## Guía de Instalación y Ejecución Local
+
+Para ejecutar este proyecto en tu entorno local, sigue estos pasos al pie de la letra. Las instrucciones cubren tanto entornos Windows como Linux/macOS.
 
 ### 1. Clonar el repositorio
-```bash
+Abre tu terminal y ejecuta:
+```
 git clone [https://github.com/TU_USUARIO/artesano-market.git](https://github.com/TU_USUARIO/artesano-market.git)
 cd artesano-market
+``` 
 
-2. Crear y activar entorno virtual
-Windows:
+## 2. Crear y activar entorno virtual
+_Windows:_
 
+```
 python -m venv venv
 .\venv\Scripts\activate
+```
 
-Mac/Linux:
+_Mac/Linux:_
 
+```
 python3 -m venv venv
 source venv/bin/activate
+```
 
-3. Instalar dependencias
+## 3. Instalar dependencias
 
+```
 pip install -r requirements.txt
+```
 
-4. Configuración de Base de Datos (PostgreSQL)
+## 4. Configuración de Base de Datos (PostgreSQL)
 
+```
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -41,16 +52,28 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+```
 
-5. Aplicar Migraciones
+### 4.5. **Entrar a la carpeta del proyecto (¡IMPORTANTE!)**
 
+```
+cd web
+```
+
+## 5. Aplicar Migraciones
+
+```
 python manage.py migrate
+```
 
-6. Crear Superusuario (Administrador)
+## 6. Crear Superusuario (Administrador)
 
+```
 python manage.py createsuperuser
+```
 
-7. Ejecutar el servidor
+## 7. Ejecutar el servidor
 
+```
 python manage.py runserver
-
+```
