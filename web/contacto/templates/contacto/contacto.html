@@ -3,10 +3,20 @@
 
 {% block content %}
 
-    <header class="text-center py-5">
-        <h1 class="display-4 font-weight-bold" style="color: var(--color-olive-dark);">Contáctanos</h1>
-        <p style="color: var(--color-olive-light);">¿Tienes dudas sobre un envío o un pedido personalizado?</p>
-    </header>
+    <div class="container py-5">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-transparent p-0">
+                <li class="breadcrumb-item"><a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: var(--color-olive-dark); font-weight: bold;">Contacto</li>
+            </ol>
+        </nav>
+
+        <div class="text-center mb-5">
+            <h1 class="display-4 font-weight-bold" style="color: var(--color-olive-dark);">Contáctanos</h1>
+            <p style="color: var(--color-olive-light);">¿Tienes dudas sobre un envío o un pedido personalizado?</p>
+        </div>
+    </div>
 
     <div class="container mb-5">
         <div class="row">

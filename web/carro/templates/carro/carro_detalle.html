@@ -3,6 +3,14 @@
 
 {% block content %}
 <div class="container py-5">
+    
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0">
+            <li class="breadcrumb-item"><a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color: var(--color-olive-dark); font-weight: bold;">Tu Carrito</li>
+        </ol>
+    </nav>
+
     <div class="text-center mb-5">
         <h1 class="display-5 font-weight-bold" style="color: var(--color-olive-dark);">Tu Carrito de Compras</h1>
         <div style="height: 4px; width: 60px; background-color: var(--color-terracotta); margin: 10px auto;"></div>
