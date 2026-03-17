@@ -1,0 +1,525 @@
+:root {
+  /* --- PALETA OLIVE GARDEN FEAST --- */
+  /* Verde Oscuro (Navbars, Footer, Textos fuertes) */
+  --color-olive-dark: #2F3E28; 
+  /* Verde Oliva Suave (Detalles secundarios) */
+  --color-olive-light: #5F7146; 
+  /* Crema (Fondo general - imita papel o lino) */
+  --color-cream-bg: #F9F7E8; 
+  /* Marrón/Tan (Tarjetas, fondos secundarios) */
+  --color-earth-tan: #E6DCC3; 
+  /* Terracota/Naranja Ladrillo (Botones de acción, Acentos) */
+  --color-terracotta: #C46D37; 
+
+  /* --- Variables Funcionales --- */
+  --color-text-dark: #1F2421; /* Casi negro, pero más suave */
+  --color-text-light: #ffffff;
+  --color-card-bg: #ffffff;
+  
+  /* Radios más sutiles para un look "Handmade" y no "Plastic Toy" */
+  --radius-xl: 12px; 
+  --radius-pill: 50px; /* Mantenemos pill solo para botones pequeños */
+  
+  /* Sombra suave y difusa (más elegante) */
+  --shadow-pop: 0 4px 15px rgba(47, 62, 40, 0.10);
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Sugerencia: Busca una fuente Serif como 'Merriweather' para títulos */
+  
+  /* Fondo Crema Suave */
+  background-color: var(--color-cream-bg); 
+  background-image: none; /* Eliminamos degradados artificiales */
+  
+  background-attachment: fixed;
+  color: var(--color-text-dark);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700; /* Menos negrita que antes para más elegancia */
+  letter-spacing: 0px; /* Espaciado normal */
+  color: var(--color-olive-dark);
+}
+
+/* --- NAVEGACIÓN --- */
+#mainNav {
+  background-color: #fff !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 0.8rem 1rem;
+  margin: 1rem;
+  border-radius: var(--radius-xl); 
+  border: 1px solid rgba(0,0,0,0.05); /* Borde sutil */
+}
+
+@media (max-width: 991px) {
+    #mainNav {
+        margin: 0;
+        border-radius: 0;
+    }
+}
+
+.navbar-brand {
+  color: var(--color-olive-dark) !important;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+#mainNav .navbar-nav .nav-item .nav-link {
+  color: var(--color-olive-dark);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1.2rem !important;
+  transition: all 0.2s ease;
+}
+
+#mainNav .navbar-nav .nav-item.active .nav-link {
+  color: var(--color-terracotta) !important; /* El link activo en color acento */
+}
+
+/* Botón del menú (Call to Action) */
+.btn-nav-cta {
+    background-color: var(--color-terracotta) !important;
+    color: white !important;
+    border-radius: var(--radius-pill);
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    font-weight: 600;
+}
+.btn-nav-cta:hover {
+    background-color: #A5582A !important; /* Un poco más oscuro al hover */
+    transform: translateY(-1px);
+}
+
+/* --- COMPONENTES PRINCIPALES --- */
+
+/* Actualizamos las clases "mattel" para que se vean artesanales */
+.intro-text, .cta-inner, .card-mattel {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pop);
+  padding: 3rem;
+  border: 1px solid #eee; /* Borde muy fino */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Botón Principal (Antes amarillo, ahora Terracota/Madera) */
+.btn-mattel {
+  background-color: var(--color-olive-dark);
+  color: white; 
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 1rem 3rem;
+  border-radius: 4px; /* Borde casi cuadrado, más serio */
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: none; /* Quitamos la sombra dura 3D */
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.btn-mattel:hover {
+  background-color: var(--color-terracotta);
+  transform: translateY(-2px); 
+  color: white;
+  box-shadow: 0 4px 10px rgba(196, 109, 55, 0.3);
+}
+
+/* Headings personalizados */
+.section-heading {
+  text-transform: none; 
+}
+
+.section-heading .section-heading-upper {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-terracotta); /* Subtítulos en naranja quemado */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.section-heading .section-heading-lower {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-olive-dark);
+  line-height: 1.2;
+}
+
+.page-section {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+/* Intro con imagen - Quitamos la rotación "loca" */
+.intro-img {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pop);
+  border: none; 
+  transform: none; /* Recto y elegante */
+}
+
+@media (min-width: 600px) {
+    .intro-text {
+        width: 60%; /* Un poco más ancho para leer mejor */
+        margin-left: -5%; 
+        z-index: 2;
+        transform: none; /* Sin rotación */
+    }
+    .intro {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.cta {
+    background: transparent;
+    padding: 0;
+}
+
+/* --- FOOTER --- */
+.footer {
+  background-color: var(--color-olive-dark); /* Fondo verde oscuro */
+  color: #E6DCC3; /* Texto color arena */
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.footer-link {
+    color: #E6DCC3;
+    opacity: 0.8;
+    text-decoration: none;
+}
+.footer-link:hover {
+    opacity: 1;
+    color: #fff;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    color: #E6DCC3;
+    margin: 0 5px;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.social-icon:hover {
+    background-color: var(--color-terracotta);
+    color: white;
+    transform: translateY(-3px);
+    border-color: var(--color-terracotta);
+}
+
+/* Utilidades extra */
+.bg-faded { background-color: #fff; }
+.text-faded { color: rgba(47, 62, 40, 0.7); }
+
+.navbar-logo {
+    height: 50px; 
+    width: auto;  
+    transition: opacity 0.3s ease;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: none; /* Quitamos rotación */
+    opacity: 0.8;
+}
+
+/* --- TARJETAS --- */
+/* Mantenemos el nombre de clase 'card-mattel' para no romper HTML, pero cambiamos el estilo */
+.card-mattel {
+  background-color: #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  padding: 2.5rem 2rem;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-mattel:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+  border-color: var(--color-earth-tan); /* Borde color arena al pasar el mouse */
+}
+
+.card-mattel i {
+    transition: transform 0.3s ease;
+    color: var(--color-terracotta); /* Iconos en terracota */
+}
+.card-mattel:hover i {
+    transform: scale(1.1); 
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-dark);
+}
+
+/* --- FORMULARIOS --- */
+.mattel-form p {
+    margin-bottom: 1.5rem; 
+    font-weight: 700;
+    color: var(--color-olive-dark);
+}
+
+.mattel-form label {
+    margin-bottom: 0.5rem;
+    display: block; 
+    color: var(--color-olive-light);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.mattel-form input[type="text"],
+.mattel-form input[type="email"],
+.mattel-form input[type="number"],
+.mattel-form textarea,
+.mattel-form select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc; /* Borde simple y limpio */
+    border-radius: 8px; /* Menos redondo */
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.mattel-form textarea {
+    border-radius: 8px;
+    resize: vertical; 
+    min-height: 120px;
+}
+
+.mattel-form input:focus,
+.mattel-form textarea:focus,
+.mattel-form select:focus {
+    outline: none;
+    border-color: var(--color-olive-dark); /* Verde oscuro al enfocar */
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(47, 62, 40, 0.1); /* Halo verde muy suave */
+}
+
+.errorlist {
+    color: #D32F2F; /* Rojo estándar para errores */
+    font-weight: bold;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+/* --- CATEGORÍAS --- */
+.category-nav-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    border-radius: 50px;
+    padding: 1rem 2rem;
+    margin: 3rem auto 4rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    display: inline-block;
+    max-width: 95%;
+    border: 1px solid #e0e0e0;
+}
+
+.cat-label {
+    font-weight: 700;
+    color: var(--color-olive-dark);
+    margin-right: 1rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.btn-mattel-cat {
+    display: inline-block;
+    background-color: var(--color-earth-tan); /* Color arena */
+    color: var(--color-olive-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.5rem 1.2rem;
+    margin: 0.25rem;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.btn-mattel-cat:hover {
+    background-color: var(--color-olive-dark);
+    color: white;
+    transform: translateY(-2px);
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* --- PRODUCT CARD (ARTESANAL) --- */
+.product-card {
+    background: #fff;
+    border-radius: 12px; /* Borde menos agresivo */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 3rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Quitamos padding interno para que la imagen llegue al borde */
+    border: 1px solid #eee;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+}
+
+.product-img-container {
+    background-color: var(--color-earth-tan);
+    position: relative;
+    overflow: hidden;
+    padding: 0; /* Imagen a sangre (full width) */
+}
+
+.product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.05); /* Zoom muy suave */
+}
+
+.product-body {
+    padding: 1.5rem;
+    text-align: left; /* Alineado a la izquierda es más elegante */
+}
+
+.product-title {
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--color-olive-dark);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.product-meta {
+     font-size: 0.9rem;
+     color: var(--color-olive-light);
+     font-weight: 500;
+     margin-top: 1rem;
+     border-top: 1px solid #eee;
+     padding-top: 0.8rem;
+     display: flex;
+     justify-content: space-between; /* Precio a un lado, autor al otro */
+}
+
+/* --- Botón "Volver" --- */
+.btn-back {
+    background-color: #fff;
+    color: var(--color-olive-dark);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 30px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #ddd;
+}
+
+.btn-back:hover {
+    transform: translateX(-3px);
+    background-color: var(--color-olive-dark);
+    color: #fff;
+    text-decoration: none;
+    border-color: var(--color-olive-dark);
+}
+
+/* --- NUEVA CLASE PARA DETALLE DE PRODUCTO --- */
+.card-detail-container {
+    background-color: #ffffff;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    /* IMPORTANTE: display block para que el grid de Bootstrap funcione bien adentro */
+    display: block; 
+    border: 1px solid #f0f0f0;
+    overflow: hidden; /* Para que la imagen no se salga de las esquinas redondeadas */
+    width: 100%;
+}
+
+/* Botones de Acción Personalizados */
+.btn-whatsapp {
+    background-color: #fff;
+    color: var(--color-olive-dark);
+    border: 2px solid var(--color-olive-dark);
+    transition: all 0.3s ease;
+}
+.btn-whatsapp:hover {
+    background-color: var(--color-olive-dark);
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-add-cart {
+    background-color: var(--color-terracotta);
+    color: #fff;
+    border: none;
+    font-weight: 800;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(196, 109, 55, 0.4);
+}
+.btn-add-cart:hover {
+    background-color: #A5582A; /* Un terracota más oscuro */
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Botón pequeño color terracota para el catálogo */
+.btn-terracotta-sm {
+    background-color: var(--color-terracotta);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-terracotta-sm:hover {
+    background-color: #A5582A; /* Un tono más oscuro al pasar el mouse */
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+/* Ajuste sutil para los títulos de los filtros */
+.filter-section-title {
+    color: var(--color-olive-dark);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-earth-tan);
+}

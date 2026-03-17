@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+env/
+.env
+
+db.sqlite3
+
+# Archivos estáticos recolectados
+staticfiles/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Media (Opcional: Si no quieres subir las fotos de prueba)
