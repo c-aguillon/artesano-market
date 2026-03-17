@@ -1,0 +1,55 @@
+{% extends "WebApp/estructura.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+
+      <div class="text-center mb-4">
+        <h1 class="font-weight-bold" style="color: var(--color-olive-dark);">Bienvenido</h1>
+        <div style="height: 4px; width: 60px; background-color: var(--color-terracotta); margin: 10px auto;"></div>
+        <p class="text-muted">Inicia sesión para continuar</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill text-center" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="card-mattel p-4 shadow-sm" style="border: 1px solid var(--color-olive-light);">
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="form-group mb-3">
+            <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Usuario</label>
+            {{ form.username }}
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Contraseña</label>
+            {{ form.password }}
+          </div>
+
+          <button type="submit" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
+            INICIAR SESIÓN
+          </button>
+        </form>
+      </div>
+
+      <div class="text-center mt-4">
+        <p class="text-muted">¿No tienes cuenta?
+          <a href="{% url 'cuentas:registro' %}" style="color: var(--color-terracotta); font-weight: bold;">
+            Regístrate aquí
+          </a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

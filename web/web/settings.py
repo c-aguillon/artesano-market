@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'blog',
     'contacto',
     'carro',
+    'pagos',
+    'cuentas',
 ]
 
 MIDDLEWARE = [
@@ -84,10 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'artesano_db',
         'USER': 'postgres',
-        'PASSWORD' : 'rodrigo123',
+        'PASSWORD' : '123456789', # Asegúrate de que esta sea la contraseña correcta
         'HOST': '127.0.0.1',
         'DATABASE_PORT': '5432',
-        'OPTIONS': {'client_encoding': 'UTF8'},
     }
 }
 
@@ -147,3 +148,12 @@ EMAIL_HOST_USER = 'tapiar349@gmail.com'
 EMAIL_HOST_PASSWORD = 'pngx ujko lnea rmim'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# PayPal Sandbox
+PAYPAL_CLIENT_ID = 'AdGfTmIjwCkWIfQJrrZzNOoec81DLUCrZwISJhF7Gb_rAIpl0SM1X4Ygj1fk7H_4SKuzi9NCBwnXCI5w'
+PAYPAL_CLIENT_SECRET = 'ELtTpLLHENDHXEorXe3oVXRPHjDBhnEfcCa1zqW19URNHKBhMC3WJS771BoN6gJhkmw1O-wnNSWlE-EL'
+PAYPAL_BASE_URL = 'https://api-m.sandbox.paypal.com'
+
+LOGIN_URL = '/cuentas/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

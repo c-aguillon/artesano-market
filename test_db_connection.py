@@ -3,7 +3,7 @@ try:
     conn = psycopg2.connect(
         dbname="artesano_db",
         user="postgres",
-        password="rodrigo123", # Asegúrate de que esta sea la contraseña correcta
+        password="123456789", # Asegúrate de que esta sea la contraseña correcta
         host="127.0.0.1",
         port="5432",
         client_encoding="UTF8"

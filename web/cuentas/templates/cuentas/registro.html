@@ -1,0 +1,151 @@
+{% extends "WebApp/estructura.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+
+      <div class="text-center mb-4">
+        <h1 class="font-weight-bold" style="color: var(--color-olive-dark);">Crear cuenta</h1>
+        <div style="height: 4px; width: 60px; background-color: var(--color-terracotta); margin: 10px auto;"></div>
+        <p class="text-muted">Únete a nuestra comunidad de artesanos y compradores</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill text-center" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="card-mattel p-4 shadow-sm" style="border: 1px solid var(--color-olive-light);">
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Nombre</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                  <small class="text-danger">{{ form.first_name.errors|join:", " }}</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Apellido</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                  <small class="text-danger">{{ form.last_name.errors|join:", " }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Correo electrónico</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <small class="text-danger">{{ form.email.errors|join:", " }}</small>
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Usuario</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+              <small class="text-danger">{{ form.username.errors|join:", " }}</small>
+            {% endif %}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Contraseña</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                  <small class="text-danger">{{ form.password1.errors|join:", " }}</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Confirmar contraseña</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                  <small class="text-danger">{{ form.password2.errors|join:", " }}</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {# Selector de Rol #}
+          <div class="form-group mb-4">
+            <label class="text-muted small text-uppercase font-weight-bold d-block mb-3" style="letter-spacing: 1px;">
+              ¿Cómo quieres usar la plataforma?
+            </label>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label class="rol-card d-block p-3 text-center rounded" style="border: 2px solid var(--color-olive-light); cursor: pointer; transition: all 0.2s;" id="label-comprador">
+                  <input type="radio" name="rol" value="comprador" class="d-none rol-radio" id="rol-comprador">
+                  <i class="fas fa-shopping-bag fa-2x mb-2 d-block" style="color: var(--color-olive-dark);"></i>
+                  <strong style="color: var(--color-olive-dark);">Comprador</strong>
+                  <p class="text-muted small mb-0 mt-1">Explora y compra productos artesanales</p>
+                </label>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="rol-card d-block p-3 text-center rounded" style="border: 2px solid var(--color-olive-light); cursor: pointer; transition: all 0.2s;" id="label-artesano">
+                  <input type="radio" name="rol" value="artesano" class="d-none rol-radio" id="rol-artesano">
+                  <i class="fas fa-paint-brush fa-2x mb-2 d-block" style="color: var(--color-terracotta);"></i>
+                  <strong style="color: var(--color-olive-dark);">Artesano</strong>
+                  <p class="text-muted small mb-0 mt-1">Vende tus creaciones en la plataforma</p>
+                </label>
+              </div>
+            </div>
+            {% if form.rol.errors %}
+              <small class="text-danger">{{ form.rol.errors|join:", " }}</small>
+            {% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
+            CREAR MI CUENTA
+          </button>
+        </form>
+      </div>
+
+      <div class="text-center mt-4">
+        <p class="text-muted">¿Ya tienes cuenta?
+          <a href="{% url 'cuentas:login' %}" style="color: var(--color-terracotta); font-weight: bold;">
+            Inicia sesión
+          </a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .rol-card:hover {
+    border-color: var(--color-terracotta) !important;
+    background-color: rgba(0,0,0,0.02);
+  }
+  .rol-card.selected {
+    border-color: var(--color-terracotta) !important;
+    background-color: rgba(210, 105, 30, 0.05);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.rol-radio').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.rol-card').forEach(c => c.classList.remove('selected'));
+      this.closest('.rol-card').classList.add('selected');
+    });
+  });
+</script>
+{% endblock %}
