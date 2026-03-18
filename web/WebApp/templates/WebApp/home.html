@@ -12,9 +12,7 @@
             <p class="lead mb-4" style="color: var(--color-earth-tan); font-weight: 500;">
                 El mercado digital de los mejores artesanos de México.
             </p>
-            <a href="{% url 'Blog' %}" class="btn btn-mattel mt-3">
-                Ver Catálogo
-            </a>
+            <a href="{% url 'Blog' %}" class="btn btn-mattel mt-3">Ver Catálogo</a>
         </div>
     </header>
 
@@ -22,7 +20,9 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img class="img-fluid intro-img" src="{% static 'WebApp/img/taller.jpg' %}" alt="Manos artesanas trabajando">
+                    <img class="img-fluid intro-img"
+                         src="{% static 'WebApp/img/taller.jpg' %}"
+                         alt="Manos artesanas trabajando">
                 </div>
                 <div class="col-lg-6">
                     <div class="intro-text">
@@ -31,7 +31,8 @@
                             <span class="section-heading-lower">Del Taller a tu Hogar</span>
                         </h2>
                         <p class="mb-4 text-muted">
-                            Cada pieza en nuestra colección es única. Trabajamos directamente con maestros artesanos para traer obras de barro negro, textiles bordados a mano y joyería de filigrana.
+                            Cada pieza en nuestra colección es única. Trabajamos directamente con maestros artesanos
+                            para traer obras de barro negro, textiles bordados a mano y joyería de filigrana.
                         </p>
                     </div>
                 </div>
@@ -49,11 +50,12 @@
             <div class="row">
                 {% for producto in productos %}
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--radius-xl); overflow: hidden;">
+                    <div class="card h-100 border-0 shadow-sm"
+                         style="border-radius: var(--radius-xl); overflow: hidden;">
                         <a href="{% url 'producto_detalle' producto.id %}" class="d-block">
                             {% if producto.imagen %}
-                                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}"
-                                     style="height: 220px; object-fit: cover;">
+                                <img src="{{ producto.imagen.url }}" class="card-img-top"
+                                     alt="{{ producto.nombre }}" style="height: 220px; object-fit: cover;">
                             {% else %}
                                 <div class="d-flex align-items-center justify-content-center bg-light"
                                      style="height: 220px;">
@@ -72,18 +74,17 @@
                             <span class="h6 font-weight-bold mb-3"
                                   style="color: var(--color-terracotta);">${{ producto.precio }}</span>
 
-                            {# Botón agregar: condicional por login #}
                             {% if user.is_authenticated %}
-                                <a href="{% url 'carro:agregar' producto.id %}"
-                                   class="btn btn-terracotta-sm btn-block text-center mt-auto"
-                                   style="font-size: 0.8rem;">
+                                <button class="btn btn-terracotta-sm btn-block text-center mt-auto btn-agregar-home"
+                                        data-id="{{ producto.id }}"
+                                        style="font-size: 0.8rem;">
                                     <i class="fas fa-cart-plus mr-1"></i> Agregar
-                                </a>
+                                </button>
                             {% else %}
-                                <a href="{% url 'cuentas:login' %}?next={% url 'carro:agregar' producto.id %}"
+                                <a href="{% url 'cuentas:login' %}?next={% url 'Blog' %}"
                                    class="btn btn-terracotta-sm btn-block text-center mt-auto"
                                    style="font-size: 0.8rem; opacity: 0.85;">
-                                    <i class="fas fa-lock mr-1"></i> Inicia sesión para comprar
+                                    <i class="fas fa-lock mr-1"></i> Inicia sesión
                                 </a>
                             {% endif %}
                         </div>
@@ -98,13 +99,17 @@
         <div class="container">
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-3 text-center mb-3 mb-md-0">
-                    <div style="width: 150px; height: 150px; background-color: #fff; border-radius: 50%; margin: 0 auto; overflow: hidden; border: 4px solid #fff; display: flex; align-items: center; justify-content: center;">
+                    <div style="width:150px;height:150px;background-color:#fff;border-radius:50%;margin:0 auto;overflow:hidden;border:4px solid #fff;display:flex;align-items:center;justify-content:center;">
                         <i class="fas fa-user fa-4x" style="color: #ddd;"></i>
                     </div>
                 </div>
                 <div class="col-md-7 text-center text-md-left">
-                    <h5 style="color: var(--color-terracotta); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Artesana del Mes</h5>
-                    <h3 class="mb-3" style="color: var(--color-olive-dark); font-weight: 700;">"Cuando te llevas una pieza, te llevas parte de mi corazón y de mi tierra."</h3>
+                    <h5 style="color: var(--color-terracotta); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">
+                        Artesana del Mes
+                    </h5>
+                    <h3 class="mb-3" style="color: var(--color-olive-dark); font-weight: 700;">
+                        "Cuando te llevas una pieza, te llevas parte de mi corazón y de mi tierra."
+                    </h3>
                     <p class="mb-0 font-weight-bold">— Doña María, <em>Tejedora de Chiapas</em></p>
                 </div>
             </div>
@@ -121,7 +126,7 @@
                             <span class="section-heading-lower">Apoya el Arte Local</span>
                         </h2>
                         <p class="mb-0 text-muted">
-                            Al comprar aquí, ayudas a familias enteras a mantener vivas sus tradiciones. ¿Listo para encontrar esa pieza especial?
+                            Al comprar aquí, ayudas a familias enteras a mantener vivas sus tradiciones.
                         </p>
                         <br>
                         {% if user.is_authenticated %}
@@ -134,5 +139,47 @@
             </div>
         </div>
     </section>
+
+{% if user.is_authenticated %}
+<script>
+document.querySelectorAll('.btn-agregar-home').forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+        const id = this.dataset.id;
+        const self = this;
+
+        self.disabled = true;
+        self.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>';
+
+        try {
+            const resp = await fetch(`/carro/agregar/${id}/`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await resp.json();
+
+            // Actualizar badge del navbar
+            const badge = document.getElementById('navbar-cart-count');
+            if (badge) {
+                badge.textContent = data.count;
+                badge.style.display = data.count > 0 ? 'inline' : 'none';
+            }
+
+            // Feedback visual
+            self.innerHTML = '<i class="fas fa-check mr-1"></i> ¡Agregado!';
+            self.style.opacity = '0.7';
+
+            setTimeout(() => {
+                self.innerHTML = '<i class="fas fa-cart-plus mr-1"></i> Agregar';
+                self.style.opacity = '1';
+                self.disabled = false;
+            }, 1500);
+
+        } catch(err) {
+            self.innerHTML = '<i class="fas fa-cart-plus mr-1"></i> Agregar';
+            self.disabled = false;
+        }
+    });
+});
+</script>
+{% endif %}
 
 {% endblock %}

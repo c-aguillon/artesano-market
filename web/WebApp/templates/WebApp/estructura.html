@@ -45,28 +45,28 @@
                     </li>
 
                     {% if user.is_authenticated %}
-                        {# Carrito — solo visible si está logueado #}
+                        {# Carrito con badge que JS puede actualizar #}
                         <li class="nav-item ml-2">
                             <a class="nav-link position-relative" href="{% url 'carro:ver_carro' %}">
                                 <i class="fas fa-shopping-cart" style="font-size: 1.2rem;"></i>
-                                {% if request.session.carro|length > 0 %}
-                                    <span class="badge badge-pill badge-danger position-absolute"
-                                          style="top: 0; right: -5px; font-size: 0.6rem;">
-                                        {{ request.session.carro|length }}
-                                    </span>
-                                {% endif %}
+                                <span id="navbar-cart-count"
+                                      class="badge badge-pill badge-danger position-absolute"
+                                      style="top: 0; right: -5px; font-size: 0.6rem;
+                                             {% if not request.session.carro or request.session.carro|length == 0 %}display:none;{% endif %}">
+                                    {{ request.session.carro|length }}
+                                </span>
                             </a>
                         </li>
 
-                        {# Dropdown de usuario #}
+                        {# Dropdown usuario #}
                         <li class="nav-item dropdown ml-2">
                             <a class="nav-link dropdown-toggle font-weight-bold d-flex align-items-center"
-                               href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                               href="#" id="userDropdown" data-toggle="dropdown"
                                style="color: var(--color-olive-dark);">
                                 <i class="fas fa-user-circle mr-1" style="font-size: 1.2rem;"></i>
                                 {{ user.first_name|default:user.username }}
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow-sm" aria-labelledby="userDropdown"
+                            <div class="dropdown-menu dropdown-menu-right shadow-sm"
                                  style="border: 1px solid var(--color-olive-light); border-radius: 12px; min-width: 200px;">
                                 {% if user.perfil.es_artesano %}
                                     <a class="dropdown-item py-2" href="{% url 'cuentas:dashboard_artesano' %}">
@@ -88,7 +88,6 @@
                         </li>
 
                     {% else %}
-                        {# No logueado: botones de login y registro #}
                         <li class="nav-item ml-2">
                             <a href="{% url 'cuentas:login' %}"
                                class="btn btn-outline-secondary rounded-pill px-3 font-weight-bold"

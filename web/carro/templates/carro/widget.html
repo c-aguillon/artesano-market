@@ -1,135 +1,177 @@
-<div
-  class="card-mattel mb-4 p-0 overflow-hidden shadow-sm"
-  style="border: 1px solid var(--color-olive-light)"
->
-  <div
-    class="p-3 text-white d-flex align-items-center justify-content-between"
-    style="background-color: var(--color-olive-dark)"
-  >
-    <h5
-      class="mb-0 font-weight-bold"
-      style="font-size: 1rem; letter-spacing: 1px"
-    >
+<div class="card-mattel mb-4 p-0 overflow-hidden shadow-sm" style="border: 1px solid var(--color-olive-light);">
+  <div class="p-3 text-white d-flex align-items-center justify-content-between"
+       style="background-color: var(--color-olive-dark);">
+    <h5 class="mb-0 font-weight-bold" style="font-size: 1rem; letter-spacing: 1px;">
       <i class="fas fa-shopping-cart mr-2"></i> TU CARRITO
     </h5>
     {% if request.session.carro.items %}
-    <span class="badge badge-pill badge-light text-dark font-weight-bold">
-      {{ request.session.carro|length }}
-    </span>
+      <span class="badge badge-pill badge-light text-dark font-weight-bold">
+        {{ request.session.carro|length }}
+      </span>
     {% endif %}
   </div>
 
   <div class="p-0">
     <table class="table table-sm table-borderless mb-0">
-      <tbody style="font-size: 0.9rem">
-        {% if request.session.carro.items %} {% for key, value in
-        request.session.carro.items %}
-        <tr
-          class="border-bottom"
-          style="border-color: rgba(0, 0, 0, 0.05) !important"
-        >
-          <td class="pl-3 py-3 align-middle" style="width: 50px">
-            {% if value.imagen %}
-            <img
-              src="{{ value.imagen }}"
-              alt="{{ value.nombre }}"
-              class="rounded shadow-sm"
-              style="width: 40px; height: 40px; object-fit: cover"
-            />
-            {% else %}
-            <div
-              class="rounded bg-light d-flex align-items-center justify-content-center"
-              style="width: 40px; height: 40px"
-            >
-              <i class="fas fa-image text-muted" style="font-size: 0.8rem"></i>
-            </div>
-            {% endif %}
-          </td>
-          <td class="py-3 align-middle">
-            <div
-              class="font-weight-bold text-dark mb-0"
-              style="line-height: 1.2"
-            >
-              {{ value.nombre }}
-            </div>
-            <div class="text-muted small">
-              x{{ value.cantidad }} — ${{ value.precio }}
-            </div>
-          </td>
-          <td class="pr-3 py-3 align-middle text-right" style="width: 100px">
-            <div class="btn-group btn-group-sm">
-              <a
-                href="{% url 'carro:restar' value.producto_id %}"
-                class="btn btn-outline-secondary border-0 px-2"
-                title="Restar"
-              >
-                <i class="fas fa-minus" style="font-size: 0.7rem"></i>
-              </a>
-              <a
-                href="{% url 'carro:agregar' value.producto_id %}"
-                class="btn btn-outline-secondary border-0 px-2"
-                title="Sumar"
-              >
-                <i class="fas fa-plus" style="font-size: 0.7rem"></i>
-              </a>
-              <a
-                href="{% url 'carro:eliminar' value.producto_id %}"
-                class="btn btn-outline-danger border-0 px-2"
-                title="Eliminar"
-              >
-                <i class="fas fa-trash-alt" style="font-size: 0.7rem"></i>
-              </a>
-            </div>
-          </td>
-        </tr>
-        {% endfor %} {% else %}
-        <tr>
-          <td colspan="3" class="text-center py-5 text-muted">
-            <i
-              class="fas fa-shopping-basket fa-3x mb-3 d-block opacity-25"
-              style="color: #ddd"
-            ></i>
-            <p class="mb-0" style="font-style: italic">Tu carrito está vacío</p>
-          </td>
-        </tr>
+      <tbody id="widget-tbody" style="font-size: 0.9rem;">
+        {% if request.session.carro.items %}
+          {% for key, value in request.session.carro.items %}
+            <tr class="border-bottom" style="border-color: rgba(0,0,0,0.05) !important;" data-id="{{ value.producto_id }}">
+              <td class="pl-3 py-3 align-middle" style="width: 50px;">
+                {% if value.imagen %}
+                  <img src="{{ value.imagen }}" alt="{{ value.nombre }}"
+                       class="rounded shadow-sm"
+                       style="width: 40px; height: 40px; object-fit: cover;">
+                {% else %}
+                  <div class="rounded bg-light d-flex align-items-center justify-content-center"
+                       style="width: 40px; height: 40px;">
+                    <i class="fas fa-image text-muted" style="font-size: 0.8rem;"></i>
+                  </div>
+                {% endif %}
+              </td>
+              <td class="py-3 align-middle">
+                <div class="font-weight-bold text-dark mb-0" style="line-height: 1.2;">{{ value.nombre }}</div>
+                <div class="text-muted small">x{{ value.cantidad }} — ${{ value.precio }}</div>
+              </td>
+              <td class="pr-3 py-3 align-middle text-right" style="width: 100px;">
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-outline-secondary border-0 px-2 btn-restar-w" data-id="{{ value.producto_id }}">
+                    <i class="fas fa-minus" style="font-size: 0.7rem;"></i>
+                  </button>
+                  <button class="btn btn-outline-secondary border-0 px-2 btn-agregar-w" data-id="{{ value.producto_id }}">
+                    <i class="fas fa-plus" style="font-size: 0.7rem;"></i>
+                  </button>
+                  <button class="btn btn-outline-danger border-0 px-2 btn-eliminar-w" data-id="{{ value.producto_id }}">
+                    <i class="fas fa-trash-alt" style="font-size: 0.7rem;"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr id="widget-vacio">
+            <td colspan="3" class="text-center py-5 text-muted">
+              <i class="fas fa-shopping-basket fa-3x mb-3 d-block opacity-25" style="color: #ddd;"></i>
+              <p class="mb-0" style="font-style: italic;">Tu carrito está vacío</p>
+            </td>
+          </tr>
         {% endif %}
       </tbody>
     </table>
   </div>
 
-  {% if request.session.carro.items %}
-  <div class="p-3 bg-light border-top">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <span
-        class="text-muted font-weight-bold small text-uppercase"
-        style="letter-spacing: 1px"
-        >Total a pagar</span
-      >
-      <span
-        class="h4 mb-0 font-weight-bold"
-        style="color: var(--color-terracotta)"
-        >${{ importe_total_carro }}</span
-      >
-    </div>
-
-    <div class="row no-gutters">
-      <div class="col-6 pr-1">
-        <a
-          href="{% url 'carro:limpiar' %}"
-          class="btn btn-sm btn-outline-secondary btn-block rounded-pill font-weight-bold py-2"
-        >
-          VACIAR
-        </a>
+  <div id="widget-footer" {% if not request.session.carro.items %}style="display:none;"{% endif %}>
+    <div class="p-3 bg-light border-top">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted font-weight-bold small text-uppercase" style="letter-spacing: 1px;">Total a pagar</span>
+        <span class="h4 mb-0 font-weight-bold" id="widget-total" style="color: var(--color-terracotta);">
+          ${{ importe_total_carro }}
+        </span>
       </div>
-      <div class="col-6 pl-1">
-        <a
-          href="{% url 'pagos:pagar' %}"
-          class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3"
-        >
-          FINALIZAR COMPRA
-        </a>
+      <div class="row no-gutters">
+        <div class="col-6 pr-1">
+          <button id="widget-btn-limpiar"
+                  class="btn btn-sm btn-outline-secondary btn-block rounded-pill font-weight-bold py-2">
+            VACIAR
+          </button>
+        </div>
+        <div class="col-6 pl-1">
+          <a href="{% url 'pagos:pagar' %}"
+             class="btn btn-sm btn-nav-cta btn-block rounded-pill font-weight-bold py-2">
+            PAGAR
+          </a>
+        </div>
       </div>
     </div>
   </div>
-  {% endif %}
 </div>
+
+<script>
+(function() {
+  const URLS = {
+    agregar:  "/carro/agregar/",
+    restar:   "/carro/restar/",
+    eliminar: "/carro/eliminar/",
+    limpiar:  "/carro/limpiar/",
+  };
+
+  async function carroFetch(url) {
+    const resp = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+    return resp.json();
+  }
+
+  function actualizarNavbarCount(count) {
+    const badge = document.getElementById("navbar-cart-count");
+    if (!badge) return;
+    badge.textContent = count;
+    badge.style.display = count > 0 ? "inline" : "none";
+  }
+
+  function renderWidget(data) {
+    const tbody  = document.getElementById("widget-tbody");
+    const footer = document.getElementById("widget-footer");
+    const total  = document.getElementById("widget-total");
+
+    actualizarNavbarCount(data.count);
+
+    if (!data.items || data.items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="3" class="text-center py-5 text-muted">
+            <i class="fas fa-shopping-basket fa-3x mb-3 d-block opacity-25" style="color:#ddd;"></i>
+            <p class="mb-0" style="font-style:italic;">Tu carrito está vacío</p>
+          </td>
+        </tr>`;
+      footer.style.display = "none";
+      return;
+    }
+
+    tbody.innerHTML = data.items.map(item => `
+      <tr class="border-bottom" style="border-color:rgba(0,0,0,0.05)!important;" data-id="${item.producto_id}">
+        <td class="pl-3 py-3 align-middle" style="width:50px;">
+          ${item.imagen
+            ? `<img src="${item.imagen}" class="rounded shadow-sm" style="width:40px;height:40px;object-fit:cover;">`
+            : `<div class="rounded bg-light d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                 <i class="fas fa-image text-muted" style="font-size:0.8rem;"></i>
+               </div>`}
+        </td>
+        <td class="py-3 align-middle">
+          <div class="font-weight-bold text-dark mb-0" style="line-height:1.2;">${item.nombre}</div>
+          <div class="text-muted small">x${item.cantidad} — $${item.precio}</div>
+        </td>
+        <td class="pr-3 py-3 align-middle text-right" style="width:100px;">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary border-0 px-2 btn-restar-w" data-id="${item.producto_id}">
+              <i class="fas fa-minus" style="font-size:0.7rem;"></i>
+            </button>
+            <button class="btn btn-outline-secondary border-0 px-2 btn-agregar-w" data-id="${item.producto_id}">
+              <i class="fas fa-plus" style="font-size:0.7rem;"></i>
+            </button>
+            <button class="btn btn-outline-danger border-0 px-2 btn-eliminar-w" data-id="${item.producto_id}">
+              <i class="fas fa-trash-alt" style="font-size:0.7rem;"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+
+    total.textContent = "$" + data.total;
+    footer.style.display = "block";
+  }
+
+  // Delegación de eventos
+  document.getElementById("widget-tbody").addEventListener("click", async (e) => {
+    const agregar  = e.target.closest(".btn-agregar-w");
+    const restar   = e.target.closest(".btn-restar-w");
+    const eliminar = e.target.closest(".btn-eliminar-w");
+
+    if (agregar)  renderWidget(await carroFetch(URLS.agregar  + agregar.dataset.id  + "/"));
+    if (restar)   renderWidget(await carroFetch(URLS.restar   + restar.dataset.id   + "/"));
+    if (eliminar) renderWidget(await carroFetch(URLS.eliminar + eliminar.dataset.id + "/"));
+  });
+
+  document.getElementById("widget-btn-limpiar")?.addEventListener("click", async () => {
+    renderWidget(await carroFetch(URLS.limpiar));
+  });
+})();
+</script>

@@ -3,76 +3,132 @@
 
 {% block content %}
 
-    <div class="container py-5">
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page"
+                style="color: var(--color-olive-dark); font-weight: bold;">Contacto</li>
+        </ol>
+    </nav>
 
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb bg-transparent p-0">
-                <li class="breadcrumb-item"><a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a></li>
-                <li class="breadcrumb-item active" aria-current="page" style="color: var(--color-olive-dark); font-weight: bold;">Contacto</li>
-            </ol>
-        </nav>
-
-        <div class="text-center mb-5">
-            <h1 class="display-4 font-weight-bold" style="color: var(--color-olive-dark);">Contáctanos</h1>
-            <p style="color: var(--color-olive-light);">¿Tienes dudas sobre un envío o un pedido personalizado?</p>
-        </div>
+    <div class="text-center mb-5">
+        <h1 class="display-4 font-weight-bold" style="color: var(--color-olive-dark);">Contáctanos</h1>
+        <p style="color: var(--color-olive-light);">¿Tienes dudas sobre un envío o un pedido personalizado?</p>
     </div>
+</div>
 
-    <div class="container mb-5">
-        <div class="row">
-            <div class="col-lg-5 mb-4">
-                <div class="card-mattel h-100 text-left align-items-start"> <h3 class="mb-4" style="color: var(--color-terracotta);">Nuestras Oficinas</h3>
-                    <p class="text-muted mb-4">
-                        Estamos ubicados en el corazón de la zona artesanal, listos para conectar tu hogar con nuestras tradiciones.
-                    </p>
-                    
-                    <div class="info-item mb-3">
-                        <i class="fas fa-map-marker-alt fa-lg mr-3" style="color: var(--color-olive-light);"></i>
-                        <span>Av. Artesanos 404, Centro, Oaxaca.</span>
-                    </div>
-                    <div class="info-item mb-3">
-                        <i class="fas fa-envelope fa-lg mr-3" style="color: var(--color-olive-light);"></i>
-                        <span>hola@artesanomarket.mx</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone fa-lg mr-3" style="color: var(--color-olive-light);"></i>
-                        <span>(555) 123-4567</span>
-                    </div>
+<div class="container mb-5">
+    <div class="row">
+
+        {# Info de contacto #}
+        <div class="col-lg-5 mb-4">
+            <div class="card-mattel h-100 text-left align-items-start">
+                <h3 class="mb-4" style="color: var(--color-terracotta);">Nuestras Oficinas</h3>
+                <p class="text-muted mb-4">
+                    Estamos ubicados en el corazón de la zona artesanal, listos para conectar tu hogar con nuestras tradiciones.
+                </p>
+                <div class="info-item mb-3">
+                    <i class="fas fa-map-marker-alt fa-lg mr-3" style="color: var(--color-olive-light);"></i>
+                    <span>Av. Artesanos 404, Centro, Oaxaca.</span>
                 </div>
-            </div>
-
-            <div class="col-lg-7">
-                <div class="card-mattel text-left align-items-stretch">
-                    <h3 class="mb-4" style="color: var(--color-olive-dark);">Envíanos un mensaje</h3>
-                    
-                    {% if "valido" in request.GET %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="background-color: var(--color-olive-light); color: white; border: none; border-radius: var(--radius-xl);">
-                            <i class="fas fa-check-circle mr-2"></i> ¡Mensaje enviado con éxito! Te contactaremos pronto.
-                            <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% elif "error" in request.GET %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background-color: var(--color-terracotta); color: white; border: none; border-radius: var(--radius-xl);">
-                            <i class="fas fa-exclamation-triangle mr-2"></i> Ups, algo salió mal. Por favor, inténtalo de nuevo.
-                            <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endif %}
-
-                    <form action="" method="POST" class="mattel-form">
-                        {% csrf_token %}
-                        
-                        {{ formulario.as_p }}
-
-                        <button type="submit" class="btn btn-mattel mt-3">
-                            Enviar Mensaje
-                        </button>
-                    </form>
+                <div class="info-item mb-3">
+                    <i class="fas fa-envelope fa-lg mr-3" style="color: var(--color-olive-light);"></i>
+                    <span>hola@artesanomarket.mx</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone fa-lg mr-3" style="color: var(--color-olive-light);"></i>
+                    <span>(555) 123-4567</span>
                 </div>
             </div>
         </div>
+
+        {# Formulario #}
+        <div class="col-lg-7">
+            <div class="card-mattel text-left align-items-stretch">
+                <h3 class="mb-4" style="color: var(--color-olive-dark);">Envíanos un mensaje</h3>
+
+                {# Alerta dinámica — oculta por defecto, JS la muestra #}
+                <div id="contacto-alerta" class="alert alert-dismissible fade show d-none" role="alert"
+                     style="border-radius: var(--radius-xl); border: none;">
+                    <span id="contacto-alerta-texto"></span>
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <form id="contacto-form" class="mattel-form">
+                    {% csrf_token %}
+                    {{ formulario.as_p }}
+
+                    <button type="submit" id="contacto-btn" class="btn btn-mattel mt-3">
+                        <span id="btn-texto">Enviar Mensaje</span>
+                        <span id="btn-spinner" class="d-none">
+                            <i class="fas fa-spinner fa-spin mr-1"></i> Enviando...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </div>
+</div>
+
+<script>
+document.getElementById('contacto-form').addEventListener('submit', async function (e) {
+    e.preventDefault();  // ← evita la recarga
+
+    const form    = this;
+    const btn     = document.getElementById('contacto-btn');
+    const texto   = document.getElementById('btn-texto');
+    const spinner = document.getElementById('btn-spinner');
+    const alerta  = document.getElementById('contacto-alerta');
+    const alertaTxt = document.getElementById('contacto-alerta-texto');
+
+    // Estado de carga
+    btn.disabled = true;
+    texto.classList.add('d-none');
+    spinner.classList.remove('d-none');
+    alerta.classList.add('d-none');
+
+    try {
+        const resp = await fetch("{% url 'contacto_enviar' %}", {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: new FormData(form)
+        });
+
+        const data = await resp.json();
+
+        // Mostrar alerta según resultado
+        alerta.classList.remove('d-none', 'alert-success', 'alert-danger');
+        if (data.ok) {
+            alerta.classList.add('alert-success');
+            alerta.style.backgroundColor = 'var(--color-olive-light)';
+            alerta.style.color = 'white';
+            alertaTxt.innerHTML = '<i class="fas fa-check-circle mr-2"></i>' + data.mensaje;
+            form.reset();  // Limpiar formulario al éxito
+        } else {
+            alerta.classList.add('alert-danger');
+            alerta.style.backgroundColor = 'var(--color-terracotta)';
+            alerta.style.color = 'white';
+            alertaTxt.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>' + (data.mensaje || 'Error al enviar.');
+        }
+
+    } catch (err) {
+        alerta.classList.remove('d-none');
+        alerta.classList.add('alert-danger');
+        alerta.style.color = 'white';
+        alertaTxt.textContent = 'Error de conexión. Intenta de nuevo.';
+    } finally {
+        // Restaurar botón
+        btn.disabled = false;
+        texto.classList.remove('d-none');
+        spinner.classList.add('d-none');
+    }
+});
+</script>
 
 {% endblock %}

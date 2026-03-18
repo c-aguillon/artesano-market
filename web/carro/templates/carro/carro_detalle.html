@@ -9,16 +9,13 @@
       <li class="breadcrumb-item">
         <a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a>
       </li>
-      <li class="breadcrumb-item active" aria-current="page" style="color: var(--color-olive-dark); font-weight: bold;">
-        Tu Carrito
-      </li>
+      <li class="breadcrumb-item active" aria-current="page"
+          style="color: var(--color-olive-dark); font-weight: bold;">Tu Carrito</li>
     </ol>
   </nav>
 
   <div class="text-center mb-5">
-    <h1 class="display-5 font-weight-bold" style="color: var(--color-olive-dark);">
-      Tu Carrito de Compras
-    </h1>
+    <h1 class="display-5 font-weight-bold" style="color: var(--color-olive-dark);">Tu Carrito de Compras</h1>
     <div style="height: 4px; width: 60px; background-color: var(--color-terracotta); margin: 10px auto;"></div>
   </div>
 
@@ -34,46 +31,43 @@
               <th class="text-right">Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="carro-tbody">
             {% if request.session.carro.items %}
               {% for key, value in request.session.carro.items %}
-                <tr>
+                <tr data-id="{{ value.producto_id }}">
                   <td class="py-3">
                     <div class="d-flex align-items-center">
                       {% if value.imagen %}
-                        <img
-                          src="{{ value.imagen }}"
-                          alt="{{ value.nombre }}"
-                          class="rounded mr-3 shadow-sm"
-                          style="width: 60px; height: 60px; object-fit: cover;"
-                        />
+                        <img src="{{ value.imagen }}" alt="{{ value.nombre }}"
+                             class="rounded mr-3 shadow-sm"
+                             style="width: 60px; height: 60px; object-fit: cover;">
                       {% endif %}
                       <span class="font-weight-bold text-dark">{{ value.nombre }}</span>
                     </div>
                   </td>
                   <td class="text-center py-3">
                     <div class="btn-group btn-group-sm border rounded-pill overflow-hidden">
-                      <a href="{% url 'carro:restar' value.producto_id %}" class="btn btn-light border-0 px-3">
+                      <button class="btn btn-light border-0 px-3 btn-restar" data-id="{{ value.producto_id }}">
                         <i class="fas fa-minus small"></i>
-                      </a>
+                      </button>
                       <span class="px-3 py-1 bg-white font-weight-bold">{{ value.cantidad }}</span>
-                      <a href="{% url 'carro:agregar' value.producto_id %}" class="btn btn-light border-0 px-3">
+                      <button class="btn btn-light border-0 px-3 btn-agregar" data-id="{{ value.producto_id }}">
                         <i class="fas fa-plus small"></i>
-                      </a>
+                      </button>
                     </div>
                   </td>
                   <td class="text-right py-3">
                     <span class="font-weight-bold text-dark">${{ value.precio }}</span>
                   </td>
                   <td class="text-right py-3">
-                    <a href="{% url 'carro:eliminar' value.producto_id %}" class="text-danger" title="Eliminar">
+                    <button class="btn btn-link text-danger p-0 btn-eliminar" data-id="{{ value.producto_id }}">
                       <i class="fas fa-trash-alt"></i>
-                    </a>
+                    </button>
                   </td>
                 </tr>
               {% endfor %}
             {% else %}
-              <tr>
+              <tr id="fila-vacia">
                 <td colspan="4" class="text-center py-5">
                   <i class="fas fa-shopping-basket fa-4x mb-3 text-muted opacity-25"></i>
                   <h4 class="text-muted">Tu carrito está vacío</h4>
@@ -84,29 +78,30 @@
           </tbody>
         </table>
 
-        {% if request.session.carro.items %}
+        <div id="carro-footer" {% if not request.session.carro.items %}style="display:none;"{% endif %}>
           <div class="mt-4 pt-4 border-top">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4 class="mb-0 text-muted">Total a pagar:</h4>
-              <h2 class="mb-0 font-weight-bold" style="color: var(--color-terracotta);">
+              <h2 class="mb-0 font-weight-bold" id="total-label" style="color: var(--color-terracotta);">
                 ${{ importe_total_carro }}
               </h2>
             </div>
-
             <div class="row">
               <div class="col-md-6 mb-3 mb-md-0">
-                <a href="{% url 'carro:limpiar' %}" class="btn btn-outline-secondary btn-block rounded-pill font-weight-bold py-3">
+                <button id="btn-limpiar"
+                        class="btn btn-outline-secondary btn-block rounded-pill font-weight-bold py-3">
                   VACIAR CARRITO
-                </a>
+                </button>
               </div>
               <div class="col-md-6">
-                <a href="{% url 'pagos:pagar' %}" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
+                <a href="{% url 'pagos:pagar' %}"
+                   class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
                   FINALIZAR COMPRA
                 </a>
               </div>
             </div>
           </div>
-        {% endif %}
+        </div>
       </div>
 
       <div class="mt-4">
@@ -117,4 +112,101 @@
     </div>
   </div>
 </div>
+
+<script>
+const URLS = {
+  agregar:  "/carro/agregar/",
+  restar:   "/carro/restar/",
+  eliminar: "/carro/eliminar/",
+  limpiar:  "/carro/limpiar/",
+};
+
+async function carroFetch(url) {
+  const resp = await fetch(url, {
+    headers: { "X-Requested-With": "XMLHttpRequest" }
+  });
+  return resp.json();
+}
+
+function actualizarNavbarCount(count) {
+  const badge = document.getElementById("navbar-cart-count");
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = "inline";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+function renderCarro(data) {
+  const tbody  = document.getElementById("carro-tbody");
+  const footer = document.getElementById("carro-footer");
+  const total  = document.getElementById("total-label");
+
+  actualizarNavbarCount(data.count);
+
+  if (!data.items || data.items.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="text-center py-5">
+          <i class="fas fa-shopping-basket fa-4x mb-3 text-muted opacity-25"></i>
+          <h4 class="text-muted">Tu carrito está vacío</h4>
+          <a href="/catalogo/" class="btn btn-nav-cta mt-3">Ir a la tienda</a>
+        </td>
+      </tr>`;
+    footer.style.display = "none";
+    return;
+  }
+
+  tbody.innerHTML = data.items.map(item => `
+    <tr data-id="${item.producto_id}">
+      <td class="py-3">
+        <div class="d-flex align-items-center">
+          ${item.imagen ? `<img src="${item.imagen}" alt="${item.nombre}" class="rounded mr-3 shadow-sm" style="width:60px;height:60px;object-fit:cover;">` : ""}
+          <span class="font-weight-bold text-dark">${item.nombre}</span>
+        </div>
+      </td>
+      <td class="text-center py-3">
+        <div class="btn-group btn-group-sm border rounded-pill overflow-hidden">
+          <button class="btn btn-light border-0 px-3 btn-restar" data-id="${item.producto_id}">
+            <i class="fas fa-minus small"></i>
+          </button>
+          <span class="px-3 py-1 bg-white font-weight-bold">${item.cantidad}</span>
+          <button class="btn btn-light border-0 px-3 btn-agregar" data-id="${item.producto_id}">
+            <i class="fas fa-plus small"></i>
+          </button>
+        </div>
+      </td>
+      <td class="text-right py-3">
+        <span class="font-weight-bold text-dark">$${item.precio}</span>
+      </td>
+      <td class="text-right py-3">
+        <button class="btn btn-link text-danger p-0 btn-eliminar" data-id="${item.producto_id}">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </td>
+    </tr>
+  `).join("");
+
+  total.textContent = "$" + data.total;
+  footer.style.display = "block";
+}
+
+// Delegación de eventos
+document.getElementById("carro-tbody").addEventListener("click", async (e) => {
+  const agregar  = e.target.closest(".btn-agregar");
+  const restar   = e.target.closest(".btn-restar");
+  const eliminar = e.target.closest(".btn-eliminar");
+
+  if (agregar)  renderCarro(await carroFetch(URLS.agregar  + agregar.dataset.id  + "/"));
+  if (restar)   renderCarro(await carroFetch(URLS.restar   + restar.dataset.id   + "/"));
+  if (eliminar) renderCarro(await carroFetch(URLS.eliminar + eliminar.dataset.id + "/"));
+});
+
+document.getElementById("btn-limpiar")?.addEventListener("click", async () => {
+  renderCarro(await carroFetch(URLS.limpiar));
+});
+</script>
+
 {% endblock %}

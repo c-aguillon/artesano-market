@@ -1,7 +1,31 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .carro import Carro
 from blog.models import Producto
+
+
+def _carro_response(request, carro):
+    """Helper: construye el JSON estándar del estado del carro."""
+    items = []
+    for key, value in carro.carro.items():
+        items.append({
+            "producto_id": value["producto_id"],
+            "nombre":      value["nombre"],
+            "precio":      value["precio"],
+            "cantidad":    value["cantidad"],
+            "imagen":      value.get("imagen", ""),
+        })
+
+    total = sum(float(i["precio"]) for i in items)
+    count = sum(i["cantidad"] for i in items)
+
+    return JsonResponse({
+        "ok":    True,
+        "items": items,
+        "total": f"{total:.2f}",
+        "count": count,
+    })
 
 
 @login_required
@@ -9,7 +33,7 @@ def agregar_producto(request, producto_id):
     carro = Carro(request)
     producto = Producto.objects.get(id=producto_id)
     carro.agregar(producto=producto)
-    return redirect(request.META.get('HTTP_REFERER', 'Home'))
+    return _carro_response(request, carro)
 
 
 @login_required
@@ -17,7 +41,7 @@ def eliminar_producto(request, producto_id):
     carro = Carro(request)
     producto = Producto.objects.get(id=producto_id)
     carro.eliminar(producto=producto)
-    return redirect(request.META.get('HTTP_REFERER', 'Home'))
+    return _carro_response(request, carro)
 
 
 @login_required
@@ -25,14 +49,14 @@ def restar_producto(request, producto_id):
     carro = Carro(request)
     producto = Producto.objects.get(id=producto_id)
     carro.restar_producto(producto=producto)
-    return redirect(request.META.get('HTTP_REFERER', 'Home'))
+    return _carro_response(request, carro)
 
 
 @login_required
 def limpiar_carro(request):
     carro = Carro(request)
     carro.limpiar_carro()
-    return redirect(request.META.get('HTTP_REFERER', 'Home'))
+    return JsonResponse({"ok": True, "items": [], "total": "0.00", "count": 0})
 
 
 @login_required

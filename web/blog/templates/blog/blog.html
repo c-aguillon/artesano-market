@@ -3,15 +3,17 @@
 
 {% block content %}
 
-<!-- Cargar Handlebars desde CDN -->
 <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
 <div class="container py-5">
-    
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-transparent p-0">
-            <li class="breadcrumb-item"><a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a></li>
-            <li class="breadcrumb-item active" aria-current="page" style="color: var(--color-olive-dark); font-weight: bold;">Mercado</li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'Home' %}" style="color: var(--color-olive-light); text-decoration: none;">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page"
+                style="color: var(--color-olive-dark); font-weight: bold;">Mercado</li>
         </ol>
     </nav>
 
@@ -22,8 +24,11 @@
     </div>
 
     <div class="row">
+
+        {# ── Panel de filtros ── #}
         <div class="col-lg-3 mb-5">
-            <div class="bg-white p-4 shadow-sm sticky-top" style="top: 100px; border-radius: var(--radius-xl); border: 1px solid #eee;">
+            <div class="bg-white p-4 shadow-sm sticky-top"
+                 style="top: 100px; border-radius: var(--radius-xl); border: 1px solid #eee;">
                 <h4 class="filter-section-title">Filtros</h4>
 
                 <form class="mattel-form" id="filterForm">
@@ -33,31 +38,31 @@
                         <select class="form-control" name="region">
                             <option value="todas">Todas las regiones</option>
                             {% for region in regiones %}
-                                <option value="{{ region.id }}" 
+                                <option value="{{ region.id }}"
                                     {% if filtros_actuales.region == region.id %}selected{% endif %}>
                                     {{ region.nombre }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
-                
+
                     <div class="form-group mb-4">
                         <label class="font-weight-bold small text-muted">TÉCNICA</label>
                         {% for categoria in categorias %}
                         <div class="custom-control custom-checkbox mb-2">
-                            <input type="checkbox" class="custom-control-input" 
-                                   id="cat{{categoria.id}}" 
-                                   name="categoria" 
+                            <input type="checkbox" class="custom-control-input"
+                                   id="cat{{ categoria.id }}"
+                                   name="categoria"
                                    value="{{ categoria.id }}"
                                    {% if categoria.id in filtros_actuales.categorias %}checked{% endif %}>
-
-                            <label class="custom-control-label" for="cat{{categoria.id}}" style="color: var(--color-text-dark); font-weight: normal; cursor: pointer;">
-                                {{categoria.nombre}}
+                            <label class="custom-control-label" for="cat{{ categoria.id }}"
+                                   style="color: var(--color-text-dark); font-weight: normal; cursor: pointer;">
+                                {{ categoria.nombre }}
                             </label>
                         </div>
                         {% endfor %}
                     </div>
-                
+
                     <div class="form-group mb-4">
                         <label class="font-weight-bold small text-muted">PRECIO MÁXIMO</label>
                         <div class="d-flex align-items-center justify-content-between mb-2">
@@ -66,31 +71,36 @@
                                 ${{ filtros_actuales.precio_max|default:"5000" }}
                             </span>
                         </div>
-                        <input type="range" class="custom-range" 
-                               name="precio_max" 
+                        <input type="range" class="custom-range"
+                               name="precio_max"
                                min="0" max="5000" step="100"
                                value="{{ filtros_actuales.precio_max|default:'5000' }}"
                                id="precioRange"
                                style="accent-color: var(--color-terracotta);">
                     </div>
 
-                    <a href="{% url 'Blog' %}" class="btn btn-sm btn-link btn-block mt-2" style="color: var(--color-olive-light);">
+                    <a href="{% url 'Blog' %}" class="btn btn-sm btn-link btn-block mt-2"
+                       style="color: var(--color-olive-light);">
                         Limpiar Filtros
                     </a>
                 </form>
             </div>
         </div>
 
+        {# ── Grid de productos ── #}
         <div class="col-lg-9">
             <div class="row" id="productContainer">
                 {% for post in posts %}
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--radius-xl); overflow: hidden;">
+                    <div class="card h-100 border-0 shadow-sm"
+                         style="border-radius: var(--radius-xl); overflow: hidden;">
                         <a href="{% url 'producto_detalle' post.id %}" class="d-block">
                             {% if post.imagen %}
-                                <img src="{{post.imagen.url}}" class="card-img-top" alt="{{post.nombre}}" style="height: 220px; object-fit: cover;">
+                                <img src="{{ post.imagen.url }}" class="card-img-top"
+                                     alt="{{ post.nombre }}" style="height: 220px; object-fit: cover;">
                             {% else %}
-                                <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px;">
+                                <div class="d-flex align-items-center justify-content-center bg-light"
+                                     style="height: 220px;">
                                     <i class="fas fa-camera fa-3x text-muted opacity-50"></i>
                                 </div>
                             {% endif %}
@@ -98,28 +108,42 @@
 
                         <div class="card-body d-flex flex-column p-3">
                             {% if post.categorias.first %}
-                                <small class="text-uppercase font-weight-bold mb-1" style="color: var(--color-terracotta); letter-spacing: 1px; font-size: 0.7rem;">
+                                <small class="text-uppercase font-weight-bold mb-1"
+                                       style="color: var(--color-terracotta); letter-spacing: 1px; font-size: 0.7rem;">
                                     {{ post.categorias.first.nombre }}
                                 </small>
                             {% endif %}
-                            
+
                             <h6 class="card-title font-weight-bold mb-1">
-                                <a href="{% url 'producto_detalle' post.id %}" style="color: var(--color-olive-dark); text-decoration: none;">
+                                <a href="{% url 'producto_detalle' post.id %}"
+                                   style="color: var(--color-olive-dark); text-decoration: none;">
                                     {{ post.nombre }}
                                 </a>
                             </h6>
 
                             <div class="mb-3">
-                                <span class="h6 font-weight-bold mb-0" style="color: var(--color-olive-dark);">
-                                    ${{ post.precio }}
-                                </span>
+                                <span class="h6 font-weight-bold mb-0"
+                                      style="color: var(--color-olive-dark);">${{ post.precio }}</span>
                             </div>
 
                             <div class="mt-auto">
-                                <a href="{% url 'carro:agregar' post.id %}" class="btn btn-terracotta-sm btn-block text-center mb-2" style="font-size: 0.8rem;">
-                                    <i class="fas fa-cart-plus mr-1"></i> Agregar al carrito
-                                </a>
-                                <a href="{% url 'producto_detalle' post.id %}" class="btn btn-outline-secondary btn-sm btn-block text-center" style="font-size: 0.8rem; border-radius: 50px;">
+                                {% if user.is_authenticated %}
+                                    <a href="{% url 'carro:agregar' post.id %}"
+                                       class="btn btn-terracotta-sm btn-block text-center mb-2 btn-agregar-catalogo"
+                                       data-id="{{ post.id }}"
+                                       style="font-size: 0.8rem;">
+                                        <i class="fas fa-cart-plus mr-1"></i> Agregar al carrito
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'cuentas:login' %}?next={% url 'Blog' %}"
+                                       class="btn btn-terracotta-sm btn-block text-center mb-2"
+                                       style="font-size: 0.8rem; opacity: 0.85;">
+                                        <i class="fas fa-lock mr-1"></i> Inicia sesión para comprar
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'producto_detalle' post.id %}"
+                                   class="btn btn-outline-secondary btn-sm btn-block text-center"
+                                   style="font-size: 0.8rem; border-radius: 50px;">
                                     Ver Detalles
                                 </a>
                             </div>
@@ -128,53 +152,53 @@
                 </div>
                 {% empty %}
                 <div class="col-12 text-center py-5">
-                     <i class="fas fa-box-open fa-4x mb-3" style="color: var(--color-earth-tan);"></i>
-                     <h3 style="color: var(--color-olive-dark);">Aún no hay productos</h3>
-                     <p class="text-muted">Estamos trabajando en curar la mejor selección para ti.</p>
+                    <i class="fas fa-box-open fa-4x mb-3" style="color: var(--color-earth-tan);"></i>
+                    <h3 style="color: var(--color-olive-dark);">Aún no hay productos</h3>
+                    <p class="text-muted">Estamos trabajando en curar la mejor selección para ti.</p>
                 </div>
                 {% endfor %}
             </div>
-            
+
             <div id="paginationContainer">
                 {% if posts.has_other_pages %}
                 <div class="row mt-4">
                     <div class="col-12 d-flex justify-content-center">
-                        <nav aria-label="Navegación del catálogo">
+                        <nav>
                             <ul class="pagination">
                                 {% if posts.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link border-0 text-muted shadow-sm rounded-circle mr-2" 
-                                       href="?page={{ posts.previous_page_number }}{{ filtros_url }}" 
-                                       style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                    <a class="page-link border-0 text-muted shadow-sm rounded-circle mr-2"
+                                       href="?page={{ posts.previous_page_number }}{{ filtros_url }}"
+                                       style="width:35px;height:35px;display:flex;align-items:center;justify-content:center;">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
                                 {% endif %}
-                            
+
                                 {% for num in posts.paginator.page_range %}
                                     {% if posts.number == num %}
                                         <li class="page-item active">
-                                            <span class="page-link border-0 shadow-sm rounded-circle mx-1" 
-                                                  style="background-color: var(--color-terracotta); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                            <span class="page-link border-0 shadow-sm rounded-circle mx-1"
+                                                  style="background-color:var(--color-terracotta);color:white;width:35px;height:35px;display:flex;align-items:center;justify-content:center;">
                                                 {{ num }}
                                             </span>
                                         </li>
                                     {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
                                         <li class="page-item">
-                                            <a class="page-link border-0 text-muted shadow-sm rounded-circle mx-1" 
+                                            <a class="page-link border-0 text-muted shadow-sm rounded-circle mx-1"
                                                href="?page={{ num }}{{ filtros_url }}"
-                                               style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                               style="width:35px;height:35px;display:flex;align-items:center;justify-content:center;">
                                                 {{ num }}
                                             </a>
                                         </li>
                                     {% endif %}
                                 {% endfor %}
-                                    
+
                                 {% if posts.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link border-0 text-muted shadow-sm rounded-circle ml-2" 
+                                    <a class="page-link border-0 text-muted shadow-sm rounded-circle ml-2"
                                        href="?page={{ posts.next_page_number }}{{ filtros_url }}"
-                                       style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                       style="width:35px;height:35px;display:flex;align-items:center;justify-content:center;">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
@@ -189,7 +213,8 @@
     </div>
 </div>
 
-<!-- Plantilla Handlebars para los productos -->
+{# ── Plantilla Handlebars ── #}
+{# isAuthenticated se pasa desde JS como variable global #}
 {% verbatim %}
 <script id="product-template" type="text/x-handlebars-template">
     {{#if productos.length}}
@@ -205,31 +230,39 @@
                         </div>
                     {{/if}}
                 </a>
-
                 <div class="card-body d-flex flex-column p-3">
                     {{#if categoria_nombre}}
-                        <small class="text-uppercase font-weight-bold mb-1" style="color: var(--color-terracotta); letter-spacing: 1px; font-size: 0.7rem;">
+                        <small class="text-uppercase font-weight-bold mb-1"
+                               style="color: var(--color-terracotta); letter-spacing: 1px; font-size: 0.7rem;">
                             {{categoria_nombre}}
                         </small>
                     {{/if}}
-                    
                     <h6 class="card-title font-weight-bold mb-1">
                         <a href="{{detalle_url}}" style="color: var(--color-olive-dark); text-decoration: none;">
                             {{nombre}}
                         </a>
                     </h6>
-
                     <div class="mb-3">
-                        <span class="h6 font-weight-bold mb-0" style="color: var(--color-olive-dark);">
-                            ${{precio}}
-                        </span>
+                        <span class="h6 font-weight-bold mb-0" style="color: var(--color-olive-dark);">${{precio}}</span>
                     </div>
-
                     <div class="mt-auto">
-                        <a href="{{agregar_carro_url}}" class="btn btn-terracotta-sm btn-block text-center mb-2" style="font-size: 0.8rem;">
-                            <i class="fas fa-cart-plus mr-1"></i> Agregar al carrito
-                        </a>
-                        <a href="{{detalle_url}}" class="btn btn-outline-secondary btn-sm btn-block text-center" style="font-size: 0.8rem; border-radius: 50px;">
+                        {{#if ../isAuthenticated}}
+                            <a href="{{agregar_carro_url}}"
+                               class="btn btn-terracotta-sm btn-block text-center mb-2 btn-agregar-catalogo"
+                               data-id="{{id}}"
+                               style="font-size: 0.8rem;">
+                                <i class="fas fa-cart-plus mr-1"></i> Agregar al carrito
+                            </a>
+                        {{else}}
+                            <a href="/cuentas/login/?next=/catalogo/"
+                               class="btn btn-terracotta-sm btn-block text-center mb-2"
+                               style="font-size: 0.8rem; opacity: 0.85;">
+                                <i class="fas fa-lock mr-1"></i> Inicia sesión para comprar
+                            </a>
+                        {{/if}}
+                        <a href="{{detalle_url}}"
+                           class="btn btn-outline-secondary btn-sm btn-block text-center"
+                           style="font-size: 0.8rem; border-radius: 50px;">
                             Ver Detalles
                         </a>
                     </div>
@@ -239,80 +272,95 @@
         {{/each}}
     {{else}}
         <div class="col-12 text-center py-5">
-             <i class="fas fa-box-open fa-4x mb-3" style="color: var(--color-earth-tan);"></i>
-             <h3 style="color: var(--color-olive-dark);">Aún no hay productos</h3>
-             <p class="text-muted">Estamos trabajando en curar la mejor selección para ti.</p>
+            <i class="fas fa-box-open fa-4x mb-3" style="color: var(--color-earth-tan);"></i>
+            <h3 style="color: var(--color-olive-dark);">Sin resultados</h3>
+            <p class="text-muted">Intenta con otros filtros.</p>
         </div>
     {{/if}}
 </script>
 {% endverbatim %}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const filterForm = document.getElementById('filterForm');
-        const rangeInput = document.getElementById('precioRange');
-        const priceDisplay = document.getElementById('precioDisplay');
-        const productContainer = document.getElementById('productContainer');
-        const paginationContainer = document.getElementById('paginationContainer');
+document.addEventListener('DOMContentLoaded', function () {
 
-        // Preparar Handlebars
-        const source = document.getElementById('product-template').innerHTML;
-        const template = Handlebars.compile(source);
+    // ← Django inyecta si el usuario está logueado
+    const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
 
-        // Función para filtrar
-        async function applyFilters() {
-            const formData = new FormData(filterForm);
-            const params = new URLSearchParams();
+    const filterForm        = document.getElementById('filterForm');
+    const rangeInput        = document.getElementById('precioRange');
+    const priceDisplay      = document.getElementById('precioDisplay');
+    const productContainer  = document.getElementById('productContainer');
+    const paginationContainer = document.getElementById('paginationContainer');
 
-            for (const [key, value] of formData.entries()) {
-                params.append(key, value);
-            }
+    const source   = document.getElementById('product-template').innerHTML;
+    const template = Handlebars.compile(source);
 
-            try {
-                const response = await fetch(`{% url 'Blog' %}?${params.toString()}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
+    // ── Filtrar productos via AJAX ──
+    async function applyFilters() {
+        const params = new URLSearchParams(new FormData(filterForm));
+
+        const response = await fetch(`{% url 'Blog' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        // Pasar isAuthenticated al contexto de Handlebars
+        const html = template({ productos: data.productos, isAuthenticated: IS_AUTHENTICATED });
+        productContainer.innerHTML = html;
+        if (paginationContainer) paginationContainer.style.display = 'none';
+        window.history.pushState({}, '', `?${params.toString()}`);
+
+        // Re-vincular eventos de agregar al carrito en los nuevos botones
+        bindAgregarButtons();
+    }
+
+    // ── Agregar al carrito sin recargar (desde el catálogo) ──
+    function bindAgregarButtons() {
+        document.querySelectorAll('.btn-agregar-catalogo').forEach(btn => {
+            btn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                const id = this.dataset.id;
+                const resp = await fetch(`/carro/agregar/${id}/`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 });
+                const data = await resp.json();
 
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Renderizar con Handlebars
-                    const html = template(data);
-                    productContainer.innerHTML = html;
-
-                    // Ocultar paginación en búsquedas dinámicas por ahora para simplificar
-                    if (paginationContainer) paginationContainer.style.display = 'none';
-                    
-                    // Actualizar URL sin recargar
-                    window.history.pushState({}, '', `?${params.toString()}`);
+                // Actualizar badge del navbar
+                const badge = document.getElementById('navbar-cart-count');
+                if (badge) {
+                    badge.textContent = data.count;
+                    badge.style.display = data.count > 0 ? 'inline' : 'none';
                 }
-            } catch (error) {
-                console.error('Error al filtrar:', error);
-            }
-        }
 
-        // Event listeners para cambios automáticos
-        if (filterForm) {
-            filterForm.addEventListener('change', (e) => {
-                if (e.target.name !== 'precio_max') {
-                    applyFilters();
-                }
+                // Feedback visual en el botón
+                this.innerHTML = '<i class="fas fa-check mr-1"></i> ¡Agregado!';
+                this.style.opacity = '0.7';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-cart-plus mr-1"></i> Agregar al carrito';
+                    this.style.opacity = '1';
+                }, 1500);
             });
+        });
+    }
 
-            // Para el slider de precio
-            rangeInput.addEventListener('input', function() {
-                priceDisplay.textContent = '$' + rangeInput.value;
-            });
+    // Vincular botones del render inicial (Django)
+    bindAgregarButtons();
 
-            rangeInput.addEventListener('change', function() {
-                applyFilters();
-            });
-
-            filterForm.addEventListener('submit', (e) => e.preventDefault());
-        }
+    // ── Listeners de filtros ──
+    filterForm.addEventListener('change', (e) => {
+        if (e.target.name !== 'precio_max') applyFilters();
     });
+
+    rangeInput.addEventListener('input', () => {
+        priceDisplay.textContent = '$' + rangeInput.value;
+    });
+
+    rangeInput.addEventListener('change', applyFilters);
+    filterForm.addEventListener('submit', (e) => e.preventDefault());
+});
 </script>
 
 {% endblock %}

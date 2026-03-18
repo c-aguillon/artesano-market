@@ -4,57 +4,77 @@
 {% block content %}
 
 <div class="container py-5">
-    
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb bg-transparent p-0">
-            <li class="breadcrumb-item"><a href="{% url 'Blog' %}" style="color: var(--color-olive-light); text-decoration: none;">Mercado</a></li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'Blog' %}" style="color: var(--color-olive-light); text-decoration: none;">Mercado</a>
+            </li>
             {% if producto.categorias.first %}
-                <li class="breadcrumb-item"><a href="{% url 'Blog' %}?categoria={{ producto.categorias.first.id }}" style="color: var(--color-olive-light); text-decoration: none;">{{ producto.categorias.first.nombre }}</a></li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'Blog' %}?categoria={{ producto.categorias.first.id }}"
+                       style="color: var(--color-olive-light); text-decoration: none;">
+                        {{ producto.categorias.first.nombre }}
+                    </a>
+                </li>
             {% endif %}
-            <li class="breadcrumb-item active" aria-current="page" style="color: var(--color-olive-dark); font-weight: bold;">{{ producto.nombre }}</li>
+            <li class="breadcrumb-item active" aria-current="page"
+                style="color: var(--color-olive-dark); font-weight: bold;">
+                {{ producto.nombre }}
+            </li>
         </ol>
     </nav>
 
     <div class="card-detail-container p-0 overflow-hidden" style="padding: 0 !important;">
         <div class="row no-gutters">
-            
-            <div class="col-lg-6 bg-light d-flex align-items-center justify-content-center" style="min-height: 500px; background-color: var(--color-earth-tan);">
+
+            {# Imagen #}
+            <div class="col-lg-6 bg-light d-flex align-items-center justify-content-center"
+                 style="min-height: 500px; background-color: var(--color-earth-tan);">
                 {% if producto.imagen %}
-                    <img src="{{ producto.imagen.url }}" class="img-fluid" alt="{{ producto.nombre }}" style="max-height: 500px; width: auto;">
+                    <img src="{{ producto.imagen.url }}" class="img-fluid"
+                         alt="{{ producto.nombre }}" style="max-height: 500px; width: auto;">
                 {% else %}
                     <i class="fas fa-camera fa-5x" style="color: rgba(255,255,255,0.5);"></i>
                 {% endif %}
             </div>
 
+            {# Info #}
             <div class="col-lg-6 p-5 d-flex flex-column">
-                
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge" style="background-color: var(--color-olive-dark); color: #fff; padding: 8px 15px; font-weight: normal; letter-spacing: 1px;">
-                        {% if producto.region %} {{ producto.region }} {% else %} México {% endif %}
+                    <span class="badge"
+                          style="background-color: var(--color-olive-dark); color: #fff; padding: 8px 15px; font-weight: normal; letter-spacing: 1px;">
+                        {% if producto.region %}{{ producto.region }}{% else %}México{% endif %}
                     </span>
                     <small class="text-muted">
-                        <i class="fas fa-user-circle mr-1"></i> Artesano: <strong>{{ producto.artesano.first_name|default:producto.artesano.username }}</strong>
+                        <i class="fas fa-user-circle mr-1"></i>
+                        Artesano: <strong>{{ producto.artesano.first_name|default:producto.artesano.username }}</strong>
                     </small>
                 </div>
 
-                <h1 class="display-5 font-weight-bold mb-3" style="color: var(--color-olive-dark);">{{ producto.nombre }}</h1>
-                
+                <h1 class="display-5 font-weight-bold mb-3" style="color: var(--color-olive-dark);">
+                    {{ producto.nombre }}
+                </h1>
+
                 <p class="lead text-muted mb-4" style="font-size: 1.1rem; line-height: 1.6;">
                     {{ producto.descripcion }}
                 </p>
 
-                <div class="mb-4 p-3 rounded" style="background-color: var(--color-cream-bg); border: 1px dashed var(--color-olive-light);">
+                <div class="mb-4 p-3 rounded"
+                     style="background-color: var(--color-cream-bg); border: 1px dashed var(--color-olive-light);">
                     <div class="row align-items-center">
                         <div class="col-6">
                             <span class="d-block small text-muted font-weight-bold" style="letter-spacing: 1px;">PRECIO</span>
-                            <span class="h2 font-weight-bold mb-0" style="color: var(--color-terracotta);">${{ producto.precio }}</span>
+                            <span class="h2 font-weight-bold mb-0" style="color: var(--color-terracotta);">
+                                ${{ producto.precio }}
+                            </span>
                         </div>
-                        
                         <div class="col-6 text-right">
                             <span class="d-block small text-muted font-weight-bold mb-1" style="letter-spacing: 1px;">STOCK</span>
-                            
                             {% if producto.stock > 5 %}
-                                <span class="badge badge-success px-3 py-2" style="background-color: var(--color-olive-light);">
+                                <span class="badge badge-success px-3 py-2"
+                                      style="background-color: var(--color-olive-light);">
                                     <i class="fas fa-check mr-1"></i> Disponible
                                 </span>
                             {% elif producto.stock > 0 %}
@@ -68,24 +88,45 @@
                     </div>
                 </div>
 
+                {# Alerta de feedback al agregar #}
+                <div id="detalle-alerta" class="d-none alert mb-3"
+                     style="border-radius: 50px; border: none; text-align: center; font-weight: bold;">
+                </div>
+
                 <div class="mt-auto">
                     {% if producto.stock > 0 %}
-                        <a href="{% url 'carro:agregar' producto.id %}" class="btn btn-add-cart btn-block mb-3 p-3 rounded-pill text-center d-block" style="width: 100%; text-decoration: none;">
-                            <i class="fas fa-shopping-bag mr-2"></i> AGREGAR AL CARRITO
-                        </a>
+                        {% if user.is_authenticated %}
+                            {# Botón AJAX — no recarga la página #}
+                            <button id="btn-agregar-detalle"
+                                    data-id="{{ producto.id }}"
+                                    class="btn btn-add-cart btn-block mb-3 p-3 rounded-pill text-center"
+                                    style="width: 100%;">
+                                <i class="fas fa-shopping-bag mr-2"></i> AGREGAR AL CARRITO
+                            </button>
+                        {% else %}
+                            <a href="{% url 'cuentas:login' %}?next={{ request.path }}"
+                               class="btn btn-add-cart btn-block mb-3 p-3 rounded-pill text-center d-block"
+                               style="width: 100%; text-decoration: none; opacity: 0.85;">
+                                <i class="fas fa-lock mr-2"></i> Inicia sesión para comprar
+                            </a>
+                        {% endif %}
 
-                        <a href="https://wa.me/?text=Hola,%20me%20interesa%20el%20producto:%20{{ producto.nombre }}" target="_blank" class="btn btn-whatsapp btn-block rounded-pill font-weight-bold p-2">
+                        <a href="https://wa.me/?text=Hola,%20me%20interesa%20el%20producto:%20{{ producto.nombre }}"
+                           target="_blank"
+                           class="btn btn-whatsapp btn-block rounded-pill font-weight-bold p-2">
                             <i class="fab fa-whatsapp mr-2" style="font-size: 1.2rem;"></i> Comprar por WhatsApp
                         </a>
                     {% else %}
-                        <button class="btn btn-secondary btn-block disabled p-3 rounded-pill" disabled> Agotado </button>
+                        <button class="btn btn-secondary btn-block disabled p-3 rounded-pill" disabled>
+                            Agotado
+                        </button>
                     {% endif %}
                 </div>
 
             </div>
         </div>
     </div>
-    
+
     <div class="mt-5">
         <a href="{% url 'Blog' %}" class="btn-back">
             <i class="fas fa-arrow-left mr-2"></i> Seguir explorando
@@ -93,5 +134,51 @@
     </div>
 
 </div>
+
+{% if user.is_authenticated and producto.stock > 0 %}
+<script>
+document.getElementById('btn-agregar-detalle').addEventListener('click', async function () {
+    const id  = this.dataset.id;
+    const btn = this;
+    const alerta = document.getElementById('detalle-alerta');
+
+    // Estado de carga
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Agregando...';
+
+    try {
+        const resp = await fetch(`/carro/agregar/${id}/`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await resp.json();
+
+        // Actualizar badge del navbar
+        const badge = document.getElementById('navbar-cart-count');
+        if (badge) {
+            badge.textContent = data.count;
+            badge.style.display = data.count > 0 ? 'inline' : 'none';
+        }
+
+        // Mostrar alerta de éxito
+        alerta.classList.remove('d-none', 'alert-danger');
+        alerta.classList.add('alert-success');
+        alerta.style.backgroundColor = 'var(--color-olive-light)';
+        alerta.style.color = 'white';
+        alerta.innerHTML = '<i class="fas fa-check-circle mr-2"></i> ¡Producto agregado al carrito!';
+
+        // Restaurar botón
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-shopping-bag mr-2"></i> AGREGAR AL CARRITO';
+
+    } catch (err) {
+        alerta.classList.remove('d-none');
+        alerta.classList.add('alert-danger');
+        alerta.textContent = 'Error al agregar. Intenta de nuevo.';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-shopping-bag mr-2"></i> AGREGAR AL CARRITO';
+    }
+});
+</script>
+{% endif %}
 
 {% endblock %}
