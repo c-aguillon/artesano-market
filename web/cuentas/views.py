@@ -39,6 +39,13 @@ def login_view(request):
             )
             if user:
                 login(request, user)
+
+                # ✅ Restaurar carrito guardado en el perfil
+                carrito_guardado = user.perfil.get_carrito()
+                if carrito_guardado and not request.session.get("carro"):
+                    request.session["carro"] = carrito_guardado
+                    request.session.modified = True
+
                 if user.perfil.es_artesano():
                     return redirect('cuentas:dashboard_artesano')
                 return redirect('Home')
