@@ -1,84 +1,99 @@
-# Tecnologías Utilizadas
+# Artesano Market
 
-* **Backend:** Python 3, Django 5.2.5
-* **Frontend:** HTML5, CSS3, JavaScript (Fetch API, Handlebars.js)
-* **Base de Datos:** SQLite / PostgreSQL
-* **Otros:** Pillow (Gestión de imágenes)
+Marketplace Django para que artesanos locales publiquen y vendan sus productos.
 
----
+## Stack
 
-## Guía de Instalación y Ejecución Local
+- Backend: Python 3, Django 5.2.5
+- Frontend: HTML, CSS y JavaScript con `fetch`
+- Base de datos: SQLite por defecto, PostgreSQL opcional
+- Pagos: PayPal Sandbox
+- PWA: `manifest.webmanifest`, service worker y persistencia de carrito con IndexedDB
 
-Para ejecutar este proyecto en tu entorno local, sigue estos pasos al pie de la letra. Las instrucciones cubren tanto entornos Windows como Linux/macOS.
+## Estructura
 
-### 1. Clonar el repositorio
-Abre tu terminal y ejecuta:
+```text
+artesano-market/
+├── .env.example
+├── requirements.txt
+├── web/
+│   ├── manage.py
+│   ├── WebApp/
+│   │   ├── static/WebApp/js/
+│   │   └── templates/WebApp/
+│   ├── blog/
+│   ├── carro/
+│   ├── cuentas/
+│   ├── pagos/
+│   └── web/
 ```
-git clone [https://github.com/TU_USUARIO/artesano-market.git](https://github.com/TU_USUARIO/artesano-market.git)
+
+## Puesta en marcha
+
+1. Clona el repositorio y entra al proyecto:
+
+```bash
+git clone https://github.com/TU_USUARIO/artesano-market.git
 cd artesano-market
-``` 
-
-## 2. Crear y activar entorno virtual
-_Windows:_
-
 ```
+
+2. Crea y activa el entorno virtual:
+
+```bash
 python -m venv venv
+```
+
+Windows:
+
+```bash
 .\venv\Scripts\activate
 ```
 
-_Mac/Linux:_
+macOS/Linux:
 
-```
-python3 -m venv venv
+```bash
 source venv/bin/activate
 ```
 
-## 3. Instalar dependencias
+3. Instala dependencias:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-## 4. Configuración de Base de Datos (PostgreSQL)
-Entrar a <ins>settings.py</ins> 
+4. Copia `.env.example` a `.env` o exporta variables de entorno.
 
-```
-cd/web/web
-```
-Editar la siguiente linea:
-```
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'artesano_db',
-        'USER': 'postgres',      # Tu usuario
-        'PASSWORD': 'tu_password', # Tu contraseña
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-```
+Notas:
+- Si no defines `POSTGRES_DB`, el proyecto usara SQLite automaticamente.
+- Para habilitar PayPal en desarrollo, define `PAYPAL_CLIENT_ID` y `PAYPAL_CLIENT_SECRET`.
+- Para correo SMTP, rellena `EMAIL_HOST_USER` y `EMAIL_HOST_PASSWORD`.
 
-### 4.5. **Entrar a la carpeta del proyecto (¡IMPORTANTE!)**
+5. Entra al proyecto Django:
 
-```
+```bash
 cd web
 ```
 
-## 5. Aplicar Migraciones
+6. Ejecuta migraciones:
 
-```
+```bash
 python manage.py migrate
 ```
 
-## 6. Crear Superusuario (Administrador)
+7. Crea un superusuario:
 
-```
+```bash
 python manage.py createsuperuser
 ```
 
-## 7. Ejecutar el servidor
+8. Inicia el servidor:
 
-```
+```bash
 python manage.py runserver
 ```
+
+## Carrito persistente
+
+- El carrito se guarda en sesion, en el perfil del usuario y en IndexedDB del navegador.
+- Si el usuario cierra sesion o el navegador, al volver a entrar se intenta restaurar el carrito.
+- El checkout sigue leyendo el carrito del servidor para no comprometer el flujo de pago.

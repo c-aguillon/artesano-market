@@ -6,7 +6,7 @@
         Pago con PayPal (Sandbox)
       </h1>
       <p class="text-muted">
-        Este ejemplo crea una orden de MXN $100.00 y la captura al aprobar.
+        El total se genera con base en el carrito actual y se captura al aprobar.
       </p>
 
       <div class="card-mattel p-4">
@@ -28,7 +28,7 @@
   paypal
     .Buttons({
       createOrder: async () => {
-        const resp = await fetch("/api/paypal/create-order", {
+        const resp = await fetch("/pagar/create-order", {
           method: "POST",
         });
         if (!resp.ok) {

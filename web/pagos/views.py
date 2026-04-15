@@ -1,17 +1,16 @@
-from django.shortcuts import render
-
-# Create your views here.
+import json
 
 import requests
 from django.conf import settings
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-import json
+from django.views.decorators.csrf import csrf_exempt
 
 
 def get_paypal_token():
-    """Obtiene el access token de PayPal usando client credentials."""
+    if not settings.PAYPAL_CLIENT_ID or not settings.PAYPAL_CLIENT_SECRET:
+        raise ValueError("PayPal no esta configurado.")
+
     url = f"{settings.PAYPAL_BASE_URL}/v1/oauth2/token"
     response = requests.post(
         url,
@@ -23,46 +22,33 @@ def get_paypal_token():
 
 
 def pagos_view(request):
-    """Renderiza la pantalla de pago."""
-    return render(request, "pagos/pagos.html", {
-        "paypal_client_id": settings.PAYPAL_CLIENT_ID,
-    })
+    return render(request, "pagos/pagos.html", {"paypal_client_id": settings.PAYPAL_CLIENT_ID})
 
 
 @csrf_exempt
 def create_order(request):
-    """Crea una orden en PayPal con el total del carrito."""
     if request.method != "POST":
-        return JsonResponse({"error": "Método no permitido"}, status=405)
+        return JsonResponse({"error": "Metodo no permitido"}, status=405)
 
-    # Obtener total del carrito desde la sesión
     carro = request.session.get("carro", {})
     total = 0.0
     for item in carro.values():
-        total += float(item.get("precio", 0)) * int(item.get("cantidad", 1))
+        total += float(item.get("subtotal", item.get("precio", 0)))
 
     if total <= 0:
-        return JsonResponse({"error": "El carrito está vacío"}, status=400)
+        return JsonResponse({"error": "El carrito esta vacio"}, status=400)
 
-    token = get_paypal_token()
+    try:
+        token = get_paypal_token()
+    except ValueError as exc:
+        return JsonResponse({"error": str(exc)}, status=503)
+
     url = f"{settings.PAYPAL_BASE_URL}/v2/checkout/orders"
-
     payload = {
         "intent": "CAPTURE",
-        "purchase_units": [
-            {
-                "amount": {
-                    "currency_code": "MXN",
-                    "value": f"{total:.2f}",
-                }
-            }
-        ],
+        "purchase_units": [{"amount": {"currency_code": "MXN", "value": f"{total:.2f}"}}],
     }
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {token}",
-    }
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
 
     response = requests.post(url, json=payload, headers=headers)
     if not response.ok:
@@ -74,44 +60,40 @@ def create_order(request):
 @csrf_exempt
 def capture_order(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Método no permitido"}, status=405)
+        return JsonResponse({"error": "Metodo no permitido"}, status=405)
 
     body = json.loads(request.body)
     order_id = body.get("orderID")
-
     if not order_id:
         return JsonResponse({"error": "orderID requerido"}, status=400)
 
-    token = get_paypal_token()
-    url = f"{settings.PAYPAL_BASE_URL}/v2/checkout/orders/{order_id}/capture"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {token}",
-    }
+    try:
+        token = get_paypal_token()
+    except ValueError as exc:
+        return JsonResponse({"error": str(exc)}, status=503)
 
+    url = f"{settings.PAYPAL_BASE_URL}/v2/checkout/orders/{order_id}/capture"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     response = requests.post(url, headers=headers)
     if not response.ok:
         return JsonResponse({"error": "Error al capturar pago", "detail": response.text}, status=500)
 
     data = response.json()
 
-    # ✅ Descontar stock de cada producto comprado
     from blog.models import Producto
-    carro = request.session.get("carro", {})
 
+    carro = request.session.get("carro", {})
     for item in carro.values():
         try:
             producto = Producto.objects.get(id=item["producto_id"])
             cantidad_comprada = int(item.get("cantidad", 1))
-            # No bajar de 0
             producto.stock = max(0, producto.stock - cantidad_comprada)
             producto.save()
         except Producto.DoesNotExist:
-            pass  # Si el producto fue eliminado, ignorar
+            pass
 
-    # Guardar resumen en sesión
     items = list(carro.values())
-    total = sum(float(i.get("precio", 0)) * int(i.get("cantidad", 1)) for i in items)
+    total = sum(float(item.get("subtotal", item.get("precio", 0))) for item in items)
 
     request.session["ultimo_pedido"] = {
         "order_id": order_id,
@@ -120,9 +102,10 @@ def capture_order(request):
         "status": data.get("status", "COMPLETED"),
     }
 
-    # Limpiar carrito
     request.session["carro"] = {}
     request.session.modified = True
+    if request.user.is_authenticated:
+        request.user.perfil.set_carrito({})
 
     return JsonResponse({"status": "ok", "redirect": "/pagar/exitoso/"})
 

@@ -8,5 +8,7 @@ urlpatterns = [
     path("eliminar/<int:producto_id>/", views.eliminar_producto, name="eliminar"),
     path("restar/<int:producto_id>/", views.restar_producto, name="restar"),
     path("limpiar/", views.limpiar_carro, name="limpiar"),
+    path("estado/", views.estado_carro, name="estado"),
+    path("sincronizar/", views.sincronizar_carro, name="sincronizar"),
     path("", views.ver_carro, name="ver_carro"),
 ]

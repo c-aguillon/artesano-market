@@ -24,6 +24,7 @@
       <div class="card-mattel p-4 shadow-sm" style="border: 1px solid var(--color-olive-light);">
         <form method="POST">
           {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
 
           <div class="form-group mb-3">
             <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Usuario</label>

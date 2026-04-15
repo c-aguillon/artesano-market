@@ -1,36 +1,18 @@
-# web/urls.py
-
-from django.contrib import admin
-from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 
 urlpatterns = [
-    # Panel de administración
-    path('admin/', admin.site.urls),
-
-    # Distribuidores (o "Nuestros Aliados") - App: servicios
-    path('aliados/', include('servicios.urls')), 
-
-    # Catálogo de Productos (Tienda) - App: blog
-    # Aquí vivirán: /catalogo/, /catalogo/producto/1, etc.
-    path('catalogo/', include('blog.urls')),
-
-    # Contacto - App: contacto
-    path('contacto/', include('contacto.urls')),
-
-    # Carrito de compras - App: carro
-        path('carro/', include('carro.urls')),
-    path('pagar/', include('pagos.urls')),
-    path('api/paypal/', include('pagos.urls')),
-    path('cuentas/', include('cuentas.urls')),
-
-    # Home / Inicio (La raíz del sitio) - App: WebApp
-    path('', include('WebApp.urls')),
-    
-
+    path("admin/", admin.site.urls),
+    path("aliados/", include("servicios.urls")),
+    path("catalogo/", include("blog.urls")),
+    path("contacto/", include("contacto.urls")),
+    path("carro/", include("carro.urls")),
+    path("pagar/", include("pagos.urls")),
+    path("cuentas/", include("cuentas.urls")),
+    path("", include("WebApp.urls")),
 ]
 
-# Configuración para servir imágenes en modo DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
