@@ -88,7 +88,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD' : '123456789', # Asegúrate de que esta sea la contraseña correcta
         'HOST': '127.0.0.1',
-        'DATABASE_PORT': '5432',
+        'PORT': '5432',
     }
 }
 
@@ -115,9 +115,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-mx'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 
@@ -157,3 +157,8 @@ PAYPAL_BASE_URL = 'https://api-m.sandbox.paypal.com'
 LOGIN_URL = '/cuentas/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+PWA_APP_NAME = "Artesano Market"
+PWA_APP_SHORT_NAME = "Artesano"
+PWA_THEME_COLOR = "#2F3E28"
+PWA_BACKGROUND_COLOR = "#F9F7E8"

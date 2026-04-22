@@ -5,6 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Artesano Market | México</title>
+    <meta name="theme-color" content="#2F3E28">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Artesano">
+    <link rel="manifest" href="{% url 'manifest' %}">
+    <link rel="icon" href="{% static 'WebApp/img/pwa/icon-192.svg' %}" type="image/svg+xml">
 
     <link href="{% static 'WebApp/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -12,7 +18,22 @@
     <link href="{% static 'WebApp/css/gestion.css' %}" rel="stylesheet">
 </head>
 
-<body>
+<body data-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
+
+    <div id="offline-indicator" class="d-none text-center py-2 px-3" style="background-color: var(--color-terracotta); color: white; font-weight: 600;">
+        Estás usando Artesano Market sin conexión. Tus cambios se sincronizarán al reconectar.
+    </div>
+
+    <div id="install-banner" class="d-none" style="position: fixed; right: 20px; bottom: 20px; z-index: 1050; max-width: 320px;">
+        <div class="card-mattel shadow-sm p-3" style="border: 1px solid var(--color-olive-light);">
+            <h6 class="mb-2" style="color: var(--color-olive-dark);">Instala Artesano Market</h6>
+            <p class="small text-muted mb-3">Accede más rápido, agrega al carrito offline y úsala como app.</p>
+            <div class="d-flex">
+                <button id="install-button" class="btn btn-nav-cta rounded-pill px-3 py-2 mr-2">Instalar</button>
+                <button id="install-dismiss" class="btn btn-outline-secondary rounded-pill px-3 py-2">Después</button>
+            </div>
+        </div>
+    </div>
 
     <nav class="navbar navbar-expand-lg navbar-light sticky-top" id="mainNav">
         <div class="container">
@@ -45,20 +66,18 @@
                     </li>
 
                     {% if user.is_authenticated %}
-                        {# Carrito con badge que JS puede actualizar #}
                         <li class="nav-item ml-2">
                             <a class="nav-link position-relative" href="{% url 'carro:ver_carro' %}">
                                 <i class="fas fa-shopping-cart" style="font-size: 1.2rem;"></i>
                                 <span id="navbar-cart-count"
                                       class="badge badge-pill badge-danger position-absolute"
                                       style="top: 0; right: -5px; font-size: 0.6rem;
-                                             {% if not request.session.carro or request.session.carro|length == 0 %}display:none;{% endif %}">
-                                    {{ request.session.carro|length }}
+                                             {% if carro_total_items == 0 %}display:none;{% endif %}">
+                                    {{ carro_total_items }}
                                 </span>
                             </a>
                         </li>
 
-                        {# Dropdown usuario #}
                         <li class="nav-item dropdown ml-2">
                             <a class="nav-link dropdown-toggle font-weight-bold d-flex align-items-center"
                                href="#" id="userDropdown" data-toggle="dropdown"
@@ -145,6 +164,8 @@
 
     <script src="{% static 'WebApp/vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'WebApp/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'WebApp/js/store.js' %}"></script>
+    <script src="{% static 'WebApp/js/pwa.js' %}"></script>
 
 </body>
 </html>

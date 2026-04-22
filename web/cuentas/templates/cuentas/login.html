@@ -12,30 +12,26 @@
         <p class="text-muted">Inicia sesión para continuar</p>
       </div>
 
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill text-center" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-          </div>
-        {% endfor %}
-      {% endif %}
+      <div id="login-alerta" class="alert d-none mb-4" style="border-radius: var(--radius-xl); border: none;"></div>
 
       <div class="card-mattel p-4 shadow-sm" style="border: 1px solid var(--color-olive-light);">
-        <form method="POST">
+        <form method="POST" id="login-form">
           {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next_url }}">
 
           <div class="form-group mb-3">
             <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Usuario</label>
             {{ form.username }}
+            <small class="text-danger d-none" data-error-for="username"></small>
           </div>
 
           <div class="form-group mb-4">
             <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Contraseña</label>
             {{ form.password }}
+            <small class="text-danger d-none" data-error-for="password"></small>
           </div>
 
-          <button type="submit" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
+          <button type="submit" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3" id="login-submit">
             INICIAR SESIÓN
           </button>
         </form>
@@ -43,7 +39,7 @@
 
       <div class="text-center mt-4">
         <p class="text-muted">¿No tienes cuenta?
-          <a href="{% url 'cuentas:registro' %}" style="color: var(--color-terracotta); font-weight: bold;">
+          <a href="{% url 'cuentas:registro' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" style="color: var(--color-terracotta); font-weight: bold;">
             Regístrate aquí
           </a>
         </p>
@@ -52,4 +48,64 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("login-form");
+  const submitButton = document.getElementById("login-submit");
+  const alertBox = document.getElementById("login-alerta");
+
+  function clearErrors() {
+    document.querySelectorAll("[data-error-for]").forEach(function (node) {
+      node.textContent = "";
+      node.classList.add("d-none");
+    });
+  }
+
+  function setError(field, message) {
+    const node = document.querySelector(`[data-error-for="${field}"]`);
+    if (!node) return;
+    node.textContent = message;
+    node.classList.remove("d-none");
+  }
+
+  function showAlert(message, isError) {
+    alertBox.classList.remove("d-none", "alert-success", "alert-danger");
+    alertBox.classList.add(isError ? "alert-danger" : "alert-success");
+    alertBox.style.backgroundColor = isError ? "var(--color-terracotta)" : "var(--color-olive-light)";
+    alertBox.style.color = "white";
+    alertBox.textContent = message;
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearErrors();
+    alertBox.classList.add("d-none");
+    submitButton.disabled = true;
+
+    try {
+      const response = await fetch("{% url 'cuentas:login' %}", {
+        method: "POST",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        body: new FormData(form),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        if (data.errors) {
+          Object.entries(data.errors).forEach(function ([field, messages]) {
+            setError(field, messages[0]);
+          });
+        }
+        throw new Error(data.message || "No fue posible iniciar sesión.");
+      }
+
+      window.location.href = data.redirect;
+    } catch (error) {
+      showAlert(error.message, true);
+      submitButton.disabled = false;
+    }
+  });
+});
+</script>
 {% endblock %}

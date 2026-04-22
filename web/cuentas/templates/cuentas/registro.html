@@ -12,36 +12,26 @@
         <p class="text-muted">Únete a nuestra comunidad de artesanos y compradores</p>
       </div>
 
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-pill text-center" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-          </div>
-        {% endfor %}
-      {% endif %}
+      <div id="registro-alerta" class="alert d-none mb-4" style="border-radius: var(--radius-xl); border: none;"></div>
 
       <div class="card-mattel p-4 shadow-sm" style="border: 1px solid var(--color-olive-light);">
-        <form method="POST">
+        <form method="POST" id="registro-form">
           {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next_url }}">
 
           <div class="row">
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Nombre</label>
                 {{ form.first_name }}
-                {% if form.first_name.errors %}
-                  <small class="text-danger">{{ form.first_name.errors|join:", " }}</small>
-                {% endif %}
+                <small class="text-danger d-none" data-error-for="first_name"></small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Apellido</label>
                 {{ form.last_name }}
-                {% if form.last_name.errors %}
-                  <small class="text-danger">{{ form.last_name.errors|join:", " }}</small>
-                {% endif %}
+                <small class="text-danger d-none" data-error-for="last_name"></small>
               </div>
             </div>
           </div>
@@ -49,17 +39,13 @@
           <div class="form-group mb-3">
             <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Correo electrónico</label>
             {{ form.email }}
-            {% if form.email.errors %}
-              <small class="text-danger">{{ form.email.errors|join:", " }}</small>
-            {% endif %}
+            <small class="text-danger d-none" data-error-for="email"></small>
           </div>
 
           <div class="form-group mb-3">
             <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Usuario</label>
             {{ form.username }}
-            {% if form.username.errors %}
-              <small class="text-danger">{{ form.username.errors|join:", " }}</small>
-            {% endif %}
+            <small class="text-danger d-none" data-error-for="username"></small>
           </div>
 
           <div class="row">
@@ -67,51 +53,44 @@
               <div class="form-group mb-3">
                 <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Contraseña</label>
                 {{ form.password1 }}
-                {% if form.password1.errors %}
-                  <small class="text-danger">{{ form.password1.errors|join:", " }}</small>
-                {% endif %}
+                <small class="text-danger d-none" data-error-for="password1"></small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 1px;">Confirmar contraseña</label>
                 {{ form.password2 }}
-                {% if form.password2.errors %}
-                  <small class="text-danger">{{ form.password2.errors|join:", " }}</small>
-                {% endif %}
+                <small class="text-danger d-none" data-error-for="password2"></small>
               </div>
             </div>
           </div>
 
-          {# Selector de Rol #}
           <div class="form-group mb-4">
             <label class="text-muted small text-uppercase font-weight-bold d-block mb-3" style="letter-spacing: 1px;">
               ¿Cómo quieres usar la plataforma?
             </label>
             <div class="row">
               <div class="col-md-6 mb-2">
-                <label class="rol-card d-block p-3 text-center rounded" style="border: 2px solid var(--color-olive-light); cursor: pointer; transition: all 0.2s;" id="label-comprador">
-                  <input type="radio" name="rol" value="comprador" class="d-none rol-radio" id="rol-comprador">
+                <label class="rol-card d-block p-3 text-center rounded" style="border: 2px solid var(--color-olive-light); cursor: pointer; transition: all 0.2s;">
+                  <input type="radio" name="rol" value="comprador" class="d-none rol-radio" {% if form.rol.value == "comprador" or not form.rol.value %}checked{% endif %}>
                   <i class="fas fa-shopping-bag fa-2x mb-2 d-block" style="color: var(--color-olive-dark);"></i>
                   <strong style="color: var(--color-olive-dark);">Comprador</strong>
                   <p class="text-muted small mb-0 mt-1">Explora y compra productos artesanales</p>
                 </label>
               </div>
               <div class="col-md-6 mb-2">
-                <label class="rol-card d-block p-3 text-center rounded" style="border: 2px solid var(--color-olive-light); cursor: pointer; transition: all 0.2s;" id="label-artesano">
-                  <input type="radio" name="rol" value="artesano" class="d-none rol-radio" id="rol-artesano">
+                <label class="rol-card d-block p-3 text-center rounded" style="border: 2px solid var(--color-olive-light); cursor: pointer; transition: all 0.2s;">
+                  <input type="radio" name="rol" value="artesano" class="d-none rol-radio" {% if form.rol.value == "artesano" %}checked{% endif %}>
                   <i class="fas fa-paint-brush fa-2x mb-2 d-block" style="color: var(--color-terracotta);"></i>
                   <strong style="color: var(--color-olive-dark);">Artesano</strong>
                   <p class="text-muted small mb-0 mt-1">Vende tus creaciones en la plataforma</p>
                 </label>
               </div>
             </div>
-            {% if form.rol.errors %}
-              <small class="text-danger">{{ form.rol.errors|join:", " }}</small>
-            {% endif %}
+            <small class="text-danger d-none" data-error-for="rol"></small>
           </div>
 
-          <button type="submit" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
+          <button type="submit" class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3" id="registro-submit">
             CREAR MI CUENTA
           </button>
         </form>
@@ -119,7 +98,7 @@
 
       <div class="text-center mt-4">
         <p class="text-muted">¿Ya tienes cuenta?
-          <a href="{% url 'cuentas:login' %}" style="color: var(--color-terracotta); font-weight: bold;">
+          <a href="{% url 'cuentas:login' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" style="color: var(--color-terracotta); font-weight: bold;">
             Inicia sesión
           </a>
         </p>
@@ -141,11 +120,79 @@
 </style>
 
 <script>
-  document.querySelectorAll('.rol-radio').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-      document.querySelectorAll('.rol-card').forEach(c => c.classList.remove('selected'));
-      this.closest('.rol-card').classList.add('selected');
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("registro-form");
+  const submitButton = document.getElementById("registro-submit");
+  const alertBox = document.getElementById("registro-alerta");
+  const radios = document.querySelectorAll(".rol-radio");
+
+  function updateSelected() {
+    document.querySelectorAll(".rol-card").forEach(function (card) {
+      card.classList.remove("selected");
     });
+    radios.forEach(function (radio) {
+      if (radio.checked) {
+        radio.closest(".rol-card").classList.add("selected");
+      }
+    });
+  }
+
+  function clearErrors() {
+    document.querySelectorAll("[data-error-for]").forEach(function (node) {
+      node.textContent = "";
+      node.classList.add("d-none");
+    });
+  }
+
+  function setError(field, message) {
+    const node = document.querySelector(`[data-error-for="${field}"]`);
+    if (!node) return;
+    node.textContent = message;
+    node.classList.remove("d-none");
+  }
+
+  function showAlert(message, isError) {
+    alertBox.classList.remove("d-none", "alert-success", "alert-danger");
+    alertBox.classList.add(isError ? "alert-danger" : "alert-success");
+    alertBox.style.backgroundColor = isError ? "var(--color-terracotta)" : "var(--color-olive-light)";
+    alertBox.style.color = "white";
+    alertBox.textContent = message;
+  }
+
+  radios.forEach(function (radio) {
+    radio.addEventListener("change", updateSelected);
   });
+  updateSelected();
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearErrors();
+    alertBox.classList.add("d-none");
+    submitButton.disabled = true;
+
+    try {
+      const response = await fetch("{% url 'cuentas:registro' %}", {
+        method: "POST",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        body: new FormData(form),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        if (data.errors) {
+          Object.entries(data.errors).forEach(function ([field, messages]) {
+            setError(field, messages[0]);
+          });
+        }
+        throw new Error(data.message || "No fue posible crear la cuenta.");
+      }
+
+      window.location.href = data.redirect;
+    } catch (error) {
+      showAlert(error.message, true);
+      submitButton.disabled = false;
+    }
+  });
+});
 </script>
 {% endblock %}

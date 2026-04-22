@@ -75,8 +75,17 @@
                                   style="color: var(--color-terracotta);">${{ producto.precio }}</span>
 
                             {% if user.is_authenticated %}
-                                <button class="btn btn-terracotta-sm btn-block text-center mt-auto btn-agregar-home"
+                                <button class="btn btn-terracotta-sm btn-block text-center mt-auto"
+                                        data-add-to-cart
                                         data-id="{{ producto.id }}"
+                                        data-cart-url="{% url 'carro:agregar' producto.id %}"
+                                        data-product-name="{{ producto.nombre|escape }}"
+                                        data-product-price="{{ producto.precio }}"
+                                        data-product-image="{% if producto.imagen %}{{ producto.imagen.url }}{% endif %}"
+                                        data-product-stock="{{ producto.stock }}"
+                                        data-default-text="<i class='fas fa-cart-plus mr-1'></i> Agregar"
+                                        data-success-text="<i class='fas fa-check mr-1'></i> ¡Agregado!"
+                                        data-loading-text="<i class='fas fa-spinner fa-spin mr-1'></i>"
                                         style="font-size: 0.8rem;">
                                     <i class="fas fa-cart-plus mr-1"></i> Agregar
                                 </button>
@@ -110,7 +119,7 @@
                     <h3 class="mb-3" style="color: var(--color-olive-dark); font-weight: 700;">
                         "Cuando te llevas una pieza, te llevas parte de mi corazón y de mi tierra."
                     </h3>
-                    <p class="mb-0 font-weight-bold">— Doña María, <em>Tejedora de Chiapas</em></p>
+                    <p class="mb-0 font-weight-bold">Doña María, <em>Tejedora de Chiapas</em></p>
                 </div>
             </div>
         </div>
@@ -139,47 +148,5 @@
             </div>
         </div>
     </section>
-
-{% if user.is_authenticated %}
-<script>
-document.querySelectorAll('.btn-agregar-home').forEach(function(btn) {
-    btn.addEventListener('click', async function() {
-        const id = this.dataset.id;
-        const self = this;
-
-        self.disabled = true;
-        self.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>';
-
-        try {
-            const resp = await fetch(`/carro/agregar/${id}/`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
-            const data = await resp.json();
-
-            // Actualizar badge del navbar
-            const badge = document.getElementById('navbar-cart-count');
-            if (badge) {
-                badge.textContent = data.count;
-                badge.style.display = data.count > 0 ? 'inline' : 'none';
-            }
-
-            // Feedback visual
-            self.innerHTML = '<i class="fas fa-check mr-1"></i> ¡Agregado!';
-            self.style.opacity = '0.7';
-
-            setTimeout(() => {
-                self.innerHTML = '<i class="fas fa-cart-plus mr-1"></i> Agregar';
-                self.style.opacity = '1';
-                self.disabled = false;
-            }, 1500);
-
-        } catch(err) {
-            self.innerHTML = '<i class="fas fa-cart-plus mr-1"></i> Agregar';
-            self.disabled = false;
-        }
-    });
-});
-</script>
-{% endif %}
 
 {% endblock %}

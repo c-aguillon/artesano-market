@@ -25,7 +25,6 @@
 
     <div class="row">
 
-        {# ── Panel de filtros ── #}
         <div class="col-lg-3 mb-5">
             <div class="bg-white p-4 shadow-sm sticky-top"
                  style="top: 100px; border-radius: var(--radius-xl); border: 1px solid #eee;">
@@ -87,7 +86,6 @@
             </div>
         </div>
 
-        {# ── Grid de productos ── #}
         <div class="col-lg-9">
             <div class="row" id="productContainer">
                 {% for post in posts %}
@@ -129,8 +127,17 @@
                             <div class="mt-auto">
                                 {% if user.is_authenticated %}
                                     <a href="{% url 'carro:agregar' post.id %}"
-                                       class="btn btn-terracotta-sm btn-block text-center mb-2 btn-agregar-catalogo"
+                                       class="btn btn-terracotta-sm btn-block text-center mb-2"
+                                       data-add-to-cart
                                        data-id="{{ post.id }}"
+                                       data-cart-url="{% url 'carro:agregar' post.id %}"
+                                       data-product-name="{{ post.nombre|escape }}"
+                                       data-product-price="{{ post.precio }}"
+                                       data-product-image="{% if post.imagen %}{{ post.imagen.url }}{% endif %}"
+                                       data-product-stock="{{ post.stock }}"
+                                       data-default-text="<i class='fas fa-cart-plus mr-1'></i> Agregar al carrito"
+                                       data-success-text="<i class='fas fa-check mr-1'></i> ¡Agregado!"
+                                       data-loading-text="<i class='fas fa-spinner fa-spin mr-1'></i>"
                                        style="font-size: 0.8rem;">
                                         <i class="fas fa-cart-plus mr-1"></i> Agregar al carrito
                                     </a>
@@ -213,8 +220,6 @@
     </div>
 </div>
 
-{# ── Plantilla Handlebars ── #}
-{# isAuthenticated se pasa desde JS como variable global #}
 {% verbatim %}
 <script id="product-template" type="text/x-handlebars-template">
     {{#if productos.length}}
@@ -248,8 +253,17 @@
                     <div class="mt-auto">
                         {{#if ../isAuthenticated}}
                             <a href="{{agregar_carro_url}}"
-                               class="btn btn-terracotta-sm btn-block text-center mb-2 btn-agregar-catalogo"
+                               class="btn btn-terracotta-sm btn-block text-center mb-2"
+                               data-add-to-cart
                                data-id="{{id}}"
+                               data-cart-url="{{agregar_carro_url}}"
+                               data-product-name="{{nombre}}"
+                               data-product-price="{{precio}}"
+                               data-product-image="{{imagen_url}}"
+                               data-product-stock="999"
+                               data-default-text="<i class='fas fa-cart-plus mr-1'></i> Agregar al carrito"
+                               data-success-text="<i class='fas fa-check mr-1'></i> ¡Agregado!"
+                               data-loading-text="<i class='fas fa-spinner fa-spin mr-1'></i>"
                                style="font-size: 0.8rem;">
                                 <i class="fas fa-cart-plus mr-1"></i> Agregar al carrito
                             </a>
@@ -281,85 +295,53 @@
 {% endverbatim %}
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
+    const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+    const filterForm = document.getElementById("filterForm");
+    const rangeInput = document.getElementById("precioRange");
+    const priceDisplay = document.getElementById("precioDisplay");
+    const productContainer = document.getElementById("productContainer");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const template = Handlebars.compile(document.getElementById("product-template").innerHTML);
 
-    // ← Django inyecta si el usuario está logueado
-    const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
-
-    const filterForm        = document.getElementById('filterForm');
-    const rangeInput        = document.getElementById('precioRange');
-    const priceDisplay      = document.getElementById('precioDisplay');
-    const productContainer  = document.getElementById('productContainer');
-    const paginationContainer = document.getElementById('paginationContainer');
-
-    const source   = document.getElementById('product-template').innerHTML;
-    const template = Handlebars.compile(source);
-
-    // ── Filtrar productos via AJAX ──
     async function applyFilters() {
         const params = new URLSearchParams(new FormData(filterForm));
-
         const response = await fetch(`{% url 'Blog' %}?${params.toString()}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { "X-Requested-With": "XMLHttpRequest" },
         });
 
         if (!response.ok) return;
 
         const data = await response.json();
-
-        // Pasar isAuthenticated al contexto de Handlebars
-        const html = template({ productos: data.productos, isAuthenticated: IS_AUTHENTICATED });
-        productContainer.innerHTML = html;
-        if (paginationContainer) paginationContainer.style.display = 'none';
-        window.history.pushState({}, '', `?${params.toString()}`);
-
-        // Re-vincular eventos de agregar al carrito en los nuevos botones
-        bindAgregarButtons();
-    }
-
-    // ── Agregar al carrito sin recargar (desde el catálogo) ──
-    function bindAgregarButtons() {
-        document.querySelectorAll('.btn-agregar-catalogo').forEach(btn => {
-            btn.addEventListener('click', async function (e) {
-                e.preventDefault();
-                const id = this.dataset.id;
-                const resp = await fetch(`/carro/agregar/${id}/`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const data = await resp.json();
-
-                // Actualizar badge del navbar
-                const badge = document.getElementById('navbar-cart-count');
-                if (badge) {
-                    badge.textContent = data.count;
-                    badge.style.display = data.count > 0 ? 'inline' : 'none';
-                }
-
-                // Feedback visual en el botón
-                this.innerHTML = '<i class="fas fa-check mr-1"></i> ¡Agregado!';
-                this.style.opacity = '0.7';
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-cart-plus mr-1"></i> Agregar al carrito';
-                    this.style.opacity = '1';
-                }, 1500);
-            });
+        productContainer.innerHTML = template({
+            productos: data.productos,
+            isAuthenticated: isAuthenticated,
         });
+
+        if (paginationContainer) {
+            paginationContainer.style.display = "none";
+        }
+
+        window.history.pushState({}, "", `?${params.toString()}`);
+        if (window.ArtesanoStore) {
+            window.ArtesanoStore.cart.bindAddButtons(productContainer);
+        }
     }
 
-    // Vincular botones del render inicial (Django)
-    bindAgregarButtons();
-
-    // ── Listeners de filtros ──
-    filterForm.addEventListener('change', (e) => {
-        if (e.target.name !== 'precio_max') applyFilters();
+    filterForm.addEventListener("change", function (event) {
+        if (event.target.name !== "precio_max") {
+            applyFilters();
+        }
     });
 
-    rangeInput.addEventListener('input', () => {
-        priceDisplay.textContent = '$' + rangeInput.value;
+    rangeInput.addEventListener("input", function () {
+        priceDisplay.textContent = "$" + rangeInput.value;
     });
 
-    rangeInput.addEventListener('change', applyFilters);
-    filterForm.addEventListener('submit', (e) => e.preventDefault());
+    rangeInput.addEventListener("change", applyFilters);
+    filterForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+    });
 });
 </script>
 

@@ -6,7 +6,7 @@
         Pago con PayPal (Sandbox)
       </h1>
       <p class="text-muted">
-        Este ejemplo crea una orden de MXN $100.00 y la captura al aprobar.
+        Finaliza tu compra de forma segura con PayPal Sandbox.
       </p>
 
       <div class="card-mattel p-4">
@@ -28,7 +28,7 @@
   paypal
     .Buttons({
       createOrder: async () => {
-        const resp = await fetch("/api/paypal/create-order", {
+        const resp = await fetch("{% url 'paypal_api:create_order' %}", {
           method: "POST",
         });
         if (!resp.ok) {
@@ -39,7 +39,7 @@
         return data.id;
       },
       onApprove: async (data) => {
-        const resp = await fetch("/pagar/capture-order", {
+        const resp = await fetch("{% url 'paypal_api:capture_order' %}", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderID: data.orderID }),

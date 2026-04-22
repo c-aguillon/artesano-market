@@ -22,6 +22,11 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="card-mattel p-4 shadow-sm" style="border: 1px solid var(--color-olive-light);">
+        <div id="carro-alerta" class="alert d-none mb-4" style="border-radius: var(--radius-xl); border: none;"></div>
+        <div id="carro-offline-note" class="alert d-none mb-4" style="border-radius: var(--radius-xl); background: var(--color-earth-tan); color: var(--color-olive-dark); border: none;">
+          Estás viendo tu carrito offline. Los cambios se sincronizarán cuando vuelva la conexión.
+        </div>
+
         <table class="table table-hover align-middle">
           <thead class="text-muted small text-uppercase" style="letter-spacing: 1px;">
             <tr>
@@ -42,7 +47,10 @@
                              class="rounded mr-3 shadow-sm"
                              style="width: 60px; height: 60px; object-fit: cover;">
                       {% endif %}
-                      <span class="font-weight-bold text-dark">{{ value.nombre }}</span>
+                      <div>
+                        <span class="font-weight-bold text-dark d-block">{{ value.nombre }}</span>
+                        <small class="text-muted">Unitario: ${{ value.precio_unitario|default:value.precio }}</small>
+                      </div>
                     </div>
                   </td>
                   <td class="text-center py-3">
@@ -95,7 +103,8 @@
               </div>
               <div class="col-md-6">
                 <a href="{% url 'pagos:pagar' %}"
-                   class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3">
+                   class="btn btn-nav-cta btn-block rounded-pill font-weight-bold py-3"
+                   id="checkout-link">
                   FINALIZAR COMPRA
                 </a>
               </div>
@@ -114,98 +123,166 @@
 </div>
 
 <script>
-const URLS = {
-  agregar:  "/carro/agregar/",
-  restar:   "/carro/restar/",
-  eliminar: "/carro/eliminar/",
-  limpiar:  "/carro/limpiar/",
-};
-
-async function carroFetch(url) {
-  const resp = await fetch(url, {
-    headers: { "X-Requested-With": "XMLHttpRequest" }
-  });
-  return resp.json();
-}
-
-function actualizarNavbarCount(count) {
-  const badge = document.getElementById("navbar-cart-count");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count;
-    badge.style.display = "inline";
-  } else {
-    badge.style.display = "none";
-  }
-}
-
-function renderCarro(data) {
-  const tbody  = document.getElementById("carro-tbody");
+document.addEventListener("DOMContentLoaded", function () {
+  const tbody = document.getElementById("carro-tbody");
   const footer = document.getElementById("carro-footer");
-  const total  = document.getElementById("total-label");
+  const total = document.getElementById("total-label");
+  const alertBox = document.getElementById("carro-alerta");
+  const offlineNote = document.getElementById("carro-offline-note");
+  const checkoutLink = document.getElementById("checkout-link");
 
-  actualizarNavbarCount(data.count);
+  function showAlert(message, isError) {
+    alertBox.classList.remove("d-none", "alert-success", "alert-danger");
+    alertBox.classList.add(isError ? "alert-danger" : "alert-success");
+    alertBox.style.backgroundColor = isError ? "var(--color-terracotta)" : "var(--color-olive-light)";
+    alertBox.style.color = "white";
+    alertBox.textContent = message;
+  }
 
-  if (!data.items || data.items.length === 0) {
+  function renderEmptyState() {
     tbody.innerHTML = `
       <tr>
         <td colspan="4" class="text-center py-5">
           <i class="fas fa-shopping-basket fa-4x mb-3 text-muted opacity-25"></i>
           <h4 class="text-muted">Tu carrito está vacío</h4>
-          <a href="/catalogo/" class="btn btn-nav-cta mt-3">Ir a la tienda</a>
+          <a href="{% url 'Blog' %}" class="btn btn-nav-cta mt-3">Ir a la tienda</a>
         </td>
       </tr>`;
     footer.style.display = "none";
-    return;
   }
 
-  tbody.innerHTML = data.items.map(item => `
-    <tr data-id="${item.producto_id}">
-      <td class="py-3">
-        <div class="d-flex align-items-center">
-          ${item.imagen ? `<img src="${item.imagen}" alt="${item.nombre}" class="rounded mr-3 shadow-sm" style="width:60px;height:60px;object-fit:cover;">` : ""}
-          <span class="font-weight-bold text-dark">${item.nombre}</span>
-        </div>
-      </td>
-      <td class="text-center py-3">
-        <div class="btn-group btn-group-sm border rounded-pill overflow-hidden">
-          <button class="btn btn-light border-0 px-3 btn-restar" data-id="${item.producto_id}">
-            <i class="fas fa-minus small"></i>
-          </button>
-          <span class="px-3 py-1 bg-white font-weight-bold">${item.cantidad}</span>
-          <button class="btn btn-light border-0 px-3 btn-agregar" data-id="${item.producto_id}">
-            <i class="fas fa-plus small"></i>
-          </button>
-        </div>
-      </td>
-      <td class="text-right py-3">
-        <span class="font-weight-bold text-dark">$${item.precio}</span>
-      </td>
-      <td class="text-right py-3">
-        <button class="btn btn-link text-danger p-0 btn-eliminar" data-id="${item.producto_id}">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-      </td>
-    </tr>
-  `).join("");
+  function renderCarro(data) {
+    if (!data.items || !data.items.length) {
+      renderEmptyState();
+      return;
+    }
 
-  total.textContent = "$" + data.total;
-  footer.style.display = "block";
-}
+    tbody.innerHTML = data.items.map(function (item) {
+      return `
+        <tr data-id="${item.producto_id}">
+          <td class="py-3">
+            <div class="d-flex align-items-center">
+              ${item.imagen ? `<img src="${item.imagen}" alt="${item.nombre}" class="rounded mr-3 shadow-sm" style="width:60px;height:60px;object-fit:cover;">` : ""}
+              <div>
+                <span class="font-weight-bold text-dark d-block">${item.nombre}</span>
+                <small class="text-muted">Unitario: $${item.precio_unitario}</small>
+              </div>
+            </div>
+          </td>
+          <td class="text-center py-3">
+            <div class="btn-group btn-group-sm border rounded-pill overflow-hidden">
+              <button class="btn btn-light border-0 px-3 btn-restar" data-id="${item.producto_id}">
+                <i class="fas fa-minus small"></i>
+              </button>
+              <span class="px-3 py-1 bg-white font-weight-bold">${item.cantidad}</span>
+              <button class="btn btn-light border-0 px-3 btn-agregar" data-id="${item.producto_id}">
+                <i class="fas fa-plus small"></i>
+              </button>
+            </div>
+          </td>
+          <td class="text-right py-3">
+            <span class="font-weight-bold text-dark">$${item.subtotal || item.precio}</span>
+          </td>
+          <td class="text-right py-3">
+            <button class="btn btn-link text-danger p-0 btn-eliminar" data-id="${item.producto_id}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>`;
+    }).join("");
 
-// Delegación de eventos
-document.getElementById("carro-tbody").addEventListener("click", async (e) => {
-  const agregar  = e.target.closest(".btn-agregar");
-  const restar   = e.target.closest(".btn-restar");
-  const eliminar = e.target.closest(".btn-eliminar");
+    total.textContent = "$" + data.total;
+    footer.style.display = "block";
+  }
 
-  if (agregar)  renderCarro(await carroFetch(URLS.agregar  + agregar.dataset.id  + "/"));
-  if (restar)   renderCarro(await carroFetch(URLS.restar   + restar.dataset.id   + "/"));
-  if (eliminar) renderCarro(await carroFetch(URLS.eliminar + eliminar.dataset.id + "/"));
-});
+  async function loadCartState() {
+    if (!window.ArtesanoStore) return;
 
-document.getElementById("btn-limpiar")?.addEventListener("click", async () => {
-  renderCarro(await carroFetch(URLS.limpiar));
+    if (navigator.onLine) {
+      const synced = await window.ArtesanoStore.cart.syncWithServer();
+      if (synced) {
+        renderCarro(synced);
+      }
+      offlineNote.classList.add("d-none");
+      checkoutLink.classList.remove("disabled");
+      checkoutLink.removeAttribute("aria-disabled");
+      return;
+    }
+
+    const items = await window.ArtesanoStore.cart.getLocalItems();
+    renderCarro({
+      items: items,
+      total: window.ArtesanoStore.cart.totalItems(items),
+    });
+    offlineNote.classList.remove("d-none");
+    checkoutLink.classList.add("disabled");
+    checkoutLink.setAttribute("aria-disabled", "true");
+  }
+
+  async function mutateCart(action, productoId) {
+    try {
+      let data;
+      if (navigator.onLine) {
+        data = await window.ArtesanoStore.cart.request(`/carro/${action}/${productoId}/`);
+      } else if (action === "agregar") {
+        const row = document.querySelector(`[data-id="${productoId}"]`);
+        const existingItems = await window.ArtesanoStore.cart.getLocalItems();
+        const item = existingItems.find((entry) => String(entry.producto_id) === String(productoId));
+        if (!item) throw new Error("Producto no disponible offline.");
+        data = await window.ArtesanoStore.cart.addOfflineProduct({
+          dataset: {
+            id: item.producto_id,
+            productName: item.nombre,
+            productPrice: item.precio_unitario,
+            productImage: item.imagen,
+            productStock: item.stock,
+          },
+        });
+      } else if (action === "restar") {
+        data = await window.ArtesanoStore.cart.restarOfflineProduct(productoId);
+      } else if (action === "eliminar") {
+        data = await window.ArtesanoStore.cart.removeOfflineProduct(productoId);
+      }
+
+      renderCarro(data);
+      if (data?.message) {
+        showAlert(data.message, false);
+      } else {
+        alertBox.classList.add("d-none");
+      }
+    } catch (error) {
+      showAlert(error.message, true);
+    }
+  }
+
+  tbody.addEventListener("click", async function (event) {
+    const agregar = event.target.closest(".btn-agregar");
+    const restar = event.target.closest(".btn-restar");
+    const eliminar = event.target.closest(".btn-eliminar");
+
+    if (agregar) await mutateCart("agregar", agregar.dataset.id);
+    if (restar) await mutateCart("restar", restar.dataset.id);
+    if (eliminar) await mutateCart("eliminar", eliminar.dataset.id);
+  });
+
+  document.getElementById("btn-limpiar")?.addEventListener("click", async function () {
+    try {
+      let data;
+      if (navigator.onLine) {
+        data = await window.ArtesanoStore.cart.request("/carro/limpiar/");
+      } else {
+        data = await window.ArtesanoStore.cart.clearOfflineCart();
+      }
+      renderCarro(data);
+      alertBox.classList.add("d-none");
+    } catch (error) {
+      showAlert(error.message, true);
+    }
+  });
+
+  window.addEventListener("online", loadCartState);
+  window.addEventListener("offline", loadCartState);
+  loadCartState();
 });
 </script>
 

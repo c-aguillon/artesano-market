@@ -20,9 +20,9 @@ urlpatterns = [
     path('contacto/', include('contacto.urls')),
 
     # Carrito de compras - App: carro
-        path('carro/', include('carro.urls')),
+    path('carro/', include('carro.urls')),
     path('pagar/', include('pagos.urls')),
-    path('api/paypal/', include('pagos.urls')),
+    path('api/paypal/', include('pagos.api_urls')),
     path('cuentas/', include('cuentas.urls')),
 
     # Home / Inicio (La raíz del sitio) - App: WebApp
